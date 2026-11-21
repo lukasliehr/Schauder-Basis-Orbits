@@ -1,6 +1,6 @@
 # Schauder bases in unitary orbits
 
-**Theorem.** A strongly continuous one-parameter group of unitary operators on a separable infinite-dimensional complex Hilbert space has simple continuous spectrum if and only if there are $g \in H$ and pairwise distinct $t_n \in \mathbb R$ such that $(U_{t_n}g)_n$ is a Schauder basis of $H$. Simple continuous spectrum means that $U$ has a cyclic vector and has no nonzero common eigenvector.
+**Theorem.** A strongly continuous one-parameter group of unitary operators on a separable infinite-dimensional complex Hilbert space has simple continuous spectrum if and only if there are $g \in H$ and pairwise distinct $t_n \in \mathbb R$ such that $(U_{t_n}g)_n$ is a Schauder basis of $H$.
 
 `MainResult` is the Lean formulation of the main theorem in [paper.tex](paper.tex). The following declaration is from [Showcase.lean](Showcase.lean).
 

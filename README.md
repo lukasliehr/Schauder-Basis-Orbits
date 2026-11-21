@@ -1,5 +1,7 @@
 # Schauder bases in unitary orbits
 
+This repository accompanies the paper [A Beginner’s Guide on How to Autoformalize Mathematics in Lean](https://functionalanalysismadrid.com/lean_guide.pdf) by Lukas Liehr, David Muñoz-Lahoz, and Mitchell A. Taylor.
+
 **Theorem.** A strongly continuous one-parameter group of unitary operators on a separable infinite-dimensional complex Hilbert space has simple continuous spectrum if and only if there are $g \in H$ and pairwise distinct $t_n \in \mathbb R$ such that $(U_{t_n}g)_n$ is a Schauder basis of $H$.
 
 `MainResult` is the Lean formulation of the main theorem in [paper.tex](paper.tex). The following declaration is from [Showcase.lean](Showcase.lean).

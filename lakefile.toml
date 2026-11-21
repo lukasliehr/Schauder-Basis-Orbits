@@ -1,0 +1,15 @@
+name = "schauderBasisOrbits"
+version = "0.1.0"
+defaultTargets = ["Showcase"]
+
+[[require]]
+name = "mathlib"
+scope = "leanprover-community"
+rev = "1ddfaa9548e05b343be9248ae08b73c3425b446e"
+
+[[lean_lib]]
+name = "LeanCode"
+globs = ["LeanCode.+"]
+
+[[lean_lib]]
+name = "Showcase"

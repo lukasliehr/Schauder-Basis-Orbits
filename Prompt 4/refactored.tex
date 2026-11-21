@@ -1,0 +1,2595 @@
+\documentclass[reqno,a4paper,12pt]{amsart}
+\usepackage[OT1]{fontenc}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage[textwidth=152mm,textheight=230mm,centering]{geometry}
+\usepackage{microtype,xurl}
+\usepackage[hidelinks]{hyperref}
+\hypersetup{pdftitle={Schauder bases in unitary orbits: a modular proof}}
+\newtheorem{theorem}{Theorem}[section]
+\newtheorem{proposition}[theorem]{Proposition}
+\newtheorem{lemma}[theorem]{Lemma}
+\newtheorem{corollary}[theorem]{Corollary}
+\theoremstyle{definition}
+\newtheorem{definition}[theorem]{Definition}
+\newtheorem{remark}[theorem]{Remark}
+\newcommand{\R}{\mathbb R}
+\newcommand{\C}{\mathbb C}
+\newcommand{\Q}{\mathbb Q}
+\newcommand{\Z}{\mathbb Z}
+\newcommand{\N}{\mathbb N}
+\newcommand{\T}{\mathbb T}
+\newcommand{\ip}[2]{\langle #1,#2\rangle}
+\newcommand{\norm}[1]{\left\lVert #1\right\rVert}
+\newcommand{\spn}{\operatorname{span}}
+\newcommand{\dist}{\operatorname{dist}}
+\newcommand{\diag}{\operatorname{diag}}
+\newcommand{\ran}{\operatorname{ran}}
+\newcommand{\PB}{\operatorname{PB}}
+\newcommand{\Id}{\operatorname{Id}}
+\newcommand{\E}{\mathbb E}
+\newcommand{\ml}[1]{\nolinkurl{#1}}
+\title[Schauder bases in unitary orbits]{Schauder bases in unitary orbits\\A modular proof for formalization}
+\date{November 18, 2026}
+\begin{document}
+\begin{abstract}
+We prove the orbit-basis characterization of simple continuous spectrum.
+The proof is organized around finite prefix inequalities, explicit
+weighted products, finite-dimensional matrix estimates, and compatible
+ordered extensions. Every construction beyond the enumerated Mathlib
+foundations is proved in the document.
+\end{abstract}
+\maketitle
+\raggedbottom
+\begingroup\footnotesize
+\tableofcontents
+\endgroup
+\clearpage
+
+\section{The target and the foundational boundary}
+\subsection{Statement}
+Let $U=(U_t)_{t\in\R}$ be a strongly continuous one-parameter group of
+unitary operators on a separable infinite-dimensional complex Hilbert
+space $H$. A vector $v$ is \emph{cyclic} when
+$\spn\{U_tv:t\in\R\}$ is dense. A \emph{common eigenvector} is a nonzero
+$a$ such that $U_ta\in\C a$ for every $t$. The group has \emph{simple
+continuous spectrum} when it has a cyclic vector and no common eigenvector.
+A Schauder basis means a sequence having a unique norm-convergent ordered
+scalar expansion for every vector.
+
+\begin{theorem}\label{thm:main}
+The group $U$ has simple continuous spectrum if and only if there are
+$g\in H$ and distinct $t_n\in\R$ such that $(U_{t_n}g)_{n\ge1}$
+is a Schauder basis of $H$.
+\end{theorem}
+
+\subsection{Conventions}
+Inner products are conjugate-linear in the first argument and linear in
+the second, as in Mathlib. All operator norms are Hilbert operator norms.
+A finite matrix acts on Euclidean coefficient space, not on a space with
+the coordinate supremum norm. Matrix inequalities are Loewner
+inequalities: $A\le B$ means that $B-A$ is Hermitian and
+$c^*(B-A)c\ge0$ for every $c$. Scalar comparisons of quadratic forms
+refer to their real values. The same order convention applies to
+bounded self-adjoint operators. Orthogonal direct sums always have the
+sum-of-squares norm.
+
+Finite ordered families are indexed by $0,\ldots,d-1$; an augmented
+scalar family has its constant at index $0$ and its nonconstants at
+$1,\ldots,d$. Infinite auxiliary sequences are indexed by $\N=\{0,1,\ldots\}$.
+Shifting the index by one gives the indexing in Theorem~\ref{thm:main}.
+We write $e_t(x)=\exp(2\pi itx)$. On $\T=\R/\Z$ and its finite powers
+we use normalized Haar measure.
+
+A finite Borel measure on $\R$ is called \emph{singleton-null} if every
+singleton has measure zero. This is the meaning of atomlessness needed
+in the construction, and corresponds to Mathlib's
+\ml{NullSingletonClass}; no assertion about atoms in arbitrary measurable
+spaces is required. Inequalities between general measurable weights
+are understood almost everywhere unless explicitly stated pointwise.
+The finite trigonometric weights constructed below obey their stated
+pointwise bounds.
+
+\subsection{What is imported from Mathlib}
+Self-containment here is relative to the Mathlib foundations permitted
+in the problem. We use:
+\begin{enumerate}
+\item Hilbert-space completeness, orthogonal projection, the
+orthogonal-complement density criterion, Hilbert duality, and the
+bounded inverse theorem for Banach spaces;
+\item finite-dimensional self-adjoint diagonalization and the basic
+algebra of finite matrices and continuous linear maps;
+\item Lebesgue and Bochner integration, Fubini--Tonelli, dominated and
+monotone convergence, and integration against a density;
+\item the Gaussian Fourier formula, Fourier inversion for a continuous
+$L^1$ function with $L^1$ Fourier transform, and uniqueness of
+characteristic functions of finite positive measures on $\R$;
+\item tightness of probability measures whose characteristic functions
+converge to a function continuous at zero, compactness of a tight
+family's closure, and the definition of weak convergence;
+\item independence of distinct monoid characters, the analytic identity
+principle, existence of an accumulation point in a positive-measure
+set for a singleton-null measure on $\R$, and totality of the circle
+characters in Haar $L^2$.
+\end{enumerate}
+The precise source revision and declarations are recorded in
+Section~\ref{sec:mathlib}. Elementary real analysis, finite sums,
+polynomial root bounds, and the topology of $\R$ are also used.
+All specialized weighted-system, matrix-prefix, spectral-measure,
+and limiting-basis arguments are supplied below. No FLT Lean code or
+external weighted-basis theorem is an input.
+
+\section{Representatives, weights, and ordered families}
+\subsection{Finite characters}
+\begin{definition}[Mixed characters]\label{def:characters}
+For a finite coordinate set $I$, put $X_I=\R\times\T^I$.
+For $(b,k)\in\Q\times\Z^I$ set
+\[
+ \chi_{b,k}(x,y)=e_b(x)\prod_{i\in I}\exp(2\pi i k_i y_i).
+\]
+A \emph{character polynomial} is a finite complex linear combination
+of these functions. On a pure torus omit the real coordinate and $b$.
+We retain these actual bounded continuous functions as representatives,
+and only then take their classes in a specified $L^2$ space.
+\end{definition}
+
+\begin{lemma}[Character algebra and Haar moments]\label{lem:character-algebra}
+Characters have modulus one, their products add frequencies, and their
+conjugates negate frequencies. Character polynomials are closed under
+addition, multiplication and conjugation, are bounded, and have finite
+auxiliary Fourier support. On a pure torus,
+\[
+ \int\chi_k\,dy=\mathbf1_{\{k=0\}},\qquad
+ \int\overline{\chi_k}\chi_l\,dy=\mathbf1_{\{k=l\}}.
+\]
+\end{lemma}
+\begin{proof}
+The exponential addition formula proves the algebraic assertions.
+A finite sum $\sum a_j\chi_j$ is bounded by $\sum|a_j|$.
+On one circle the integral over $[0,1]$ of $\exp(2\pi iny)$ is one
+for $n=0$ and, by its antiderivative, zero for nonzero integer $n$.
+Fubini gives the finite-product formula, including the empty product.
+The second identity follows by conjugation and multiplication.
+\end{proof}
+
+\begin{lemma}[Weighted measures and their norms]\label{lem:weighted-measures}
+Let $\mu$ be finite and $w$ measurable with $0<w\le1$ almost everywhere.
+Then $w\mu$ is finite, has the same null sets as $\mu$, and is nonzero
+if $\mu\ne0$. It is singleton-null if $\mu$ is. For bounded measurable
+$f,g$ define
+\[
+ \ip{f}{g}_{w\mu}=\int\overline f g w\,d\mu,\qquad
+ \|f\|_{w\mu}^2=\int |f|^2w\,d\mu.
+\]
+These are the inner products and norms of their $L^2(w\mu)$ classes.
+If $w_j\to w$ in $L^1(\mu)$, the inner products of any fixed finite
+list of bounded functions converge entrywise.
+\end{lemma}
+\begin{proof}
+Finiteness and the displayed identities follow from integration against
+a density. If $\int_Aw\,d\mu=0$, then
+$\mu(A\cap\{w\ge1/n\})=0$ for every positive integer $n$.
+Their union covers $A$ outside the null set $\{w=0\}$, proving equality
+of null sets; all other measure assertions follow.
+Finally
+\[
+ \left|\int\overline f g(w_j-w)\,d\mu\right|
+ \le\|f\|_\infty\|g\|_\infty\|w_j-w\|_{L^1(\mu)}.
+\]
+\end{proof}
+
+\begin{definition}[Prefix bound]\label{def:prefix}
+For an ordered family $v=(v_0,\ldots,v_{d-1})$ in a Hilbert space and
+$K\ge0$, write $\PB_K(v)$ if
+\[
+ \left\|\sum_{i<k}a_iv_i\right\|
+ \le K\left\|\sum_{i<d}a_iv_i\right\|
+ \quad(0\le k\le d,\ a\in\C^d).
+\]
+Its synthesis map is $X_va=\sum_i a_iv_i$, and its Gram matrix is
+$G_v=(\ip{v_i}{v_j})_{ij}=X_v^*X_v$.
+For a measure subscript we use the corresponding $L^2$ norm.
+No optimal finite basis constant is needed.
+\end{definition}
+
+\begin{lemma}[Gram and prefix identities]\label{lem:gram-prefix}
+For every $a$, $\|X_va\|^2=a^*G_va$. The family is independent exactly
+when $G_v>0$. If $D_k$ is the Euclidean coordinate projection onto the
+first $k$ entries, then
+\[
+ \PB_K(v)\quad\Longleftrightarrow\quad D_kG_vD_k\le K^2G_v
+ \quad\hbox{for every }k.
+\]
+For a nonempty independent family a prefix bound must have $K\ge1$.
+Multiplying the measure by a positive scalar leaves prefix bounds
+unchanged and multiplies squared distances by that scalar.
+\end{lemma}
+\begin{proof}
+Expand the squared norm as a double sum. Positivity is equivalent to
+having zero kernel for synthesis. Apply the norm formula to $a,D_ka$
+to get the matrix characterization. The full prefix is the identity
+on a nonzero span, so $K\ge1$. The scaling claims follow by multiplying
+each squared norm, and then taking the infimum for distance.
+\end{proof}
+
+\begin{lemma}[Three operations on prefix bounds]\label{lem:prefix-operations}
+\begin{enumerate}
+\item If $G>0$, $0<a\le b$, $aG\le L\le bG$, and $\PB_K(G)$ holds, then
+$\PB_{\sqrt{b/a}K}(L)$ holds.
+\item An ordered subfamily of a family with $\PB_K$ has $\PB_K$.
+An orthogonal concatenation of families with bounds $K_i\le K$ has
+bound $K$, provided $K\ge1$.
+\item Let the first $r$ vectors of an independent family span $V$.
+If all coordinate prefixes ending after that initial block have norm
+at most $K$, the remaining vectors, orthogonally projected off $V$,
+are independent and have $\PB_K$.
+\end{enumerate}
+\end{lemma}
+\begin{proof}
+For (1), $D_kLD_k\le bD_kGD_k\le bK^2G\le(b/a)K^2L$.
+For a subfamily insert zero coefficients in the omitted coordinates.
+For orthogonal concatenation, square the norm and sum the bounds in
+the orthogonal components.
+For (3), a zero projected tail combination lies in the initial span,
+so independence makes its coefficients zero. For a tail combination
+$x$ choose the initial vector $a=-P_Vx$. A prefix ending in the tail
+acts on $a+x$ as $a+x_{\rm prefix}$. Its norm is at most
+$K\|(I-P_V)x\|$. Projecting this output off $V$ gives the asserted
+prefix inequality. Only prefixes ending after the initial block are used.
+\end{proof}
+
+\begin{lemma}[Concatenation across a small angle]\label{lem:angle}
+Suppose nonempty independent families in $E,F$ have bounds $K_E,K_F$, and
+$|\ip{x}{y}|\le\beta\|x\|\|y\|$ for $x\in E,y\in F$, with $0\le\beta<1$.
+Their concatenation is independent and has bound
+\[
+ \sqrt{(1+\beta)/(1-\beta)}\max(K_E,K_F).
+\]
+\end{lemma}
+\begin{proof}
+The Cauchy--Schwarz bound on the cross term gives
+\[
+ (1-\beta)(\|x\|^2+\|y\|^2)\le\|x+y\|^2
+ \le(1+\beta)(\|x\|^2+\|y\|^2).
+\]
+The lower bound proves independence. In the orthogonal direct-sum
+metric the concatenation has bound $\max(K_E,K_F)$ by
+Lemma~\ref{lem:prefix-operations}; the two inequalities transfer that
+bound to the actual norm.
+\end{proof}
+
+\begin{lemma}[Distances under decreasing weights]\label{lem:distance-monotone}
+Let $\mu$ be finite, let $f,A,A'$ consist of bounded measurable
+functions, and let $0\le w'\le w\le1$ be measurable weights.
+For a finite list $A$ put
+$d_\nu(f,A)=\inf_a\|f-X_Aa\|_\nu$.
+If $A'$ extends $A$ as an initial
+segment, then $d_{w'\mu}(f,A')\le d_{w\mu}(f,A)$.
+\end{lemma}
+\begin{proof}
+Pad each coefficient vector for $A$ by zeros. Its residual under $w'$
+has norm at most the same residual under $w$. Take infima.
+Thus this comparison does not identify two different $L^2$ spaces.
+\end{proof}
+
+\section{Matrix estimates with explicit metrics}
+For a positive definite matrix $G$ we also write $\PB_K(G)$ for the
+inequalities in Lemma~\ref{lem:gram-prefix}. Throughout this section
+all matrix inverses are taken only for positive definite matrices.
+
+\begin{lemma}[Inverse quadratic forms]\label{lem:inverse-variational}
+If $G>0$, then
+\[
+ v^*G^{-1}v=\max_x\{2\operatorname{Re}(v^*x)-x^*Gx\}.
+\]
+Consequently inversion reverses positive matrix order. If $E$ is an
+orthogonal projection, the inverse of $EGE$ on $\ran E$ is at most
+$EG^{-1}E$ on that subspace. For a measurable positive matrix family
+$G(s)\ge aI$, $a>0$, on a probability space, with $G$ integrable,
+\[
+ \left(\int G\,d\pi\right)^{-1}\le\int G^{-1}\,d\pi.
+\]
+\end{lemma}
+\begin{proof}
+Subtracting the expression in braces from the left side gives
+$(x-G^{-1}v)^*G(x-G^{-1}v)$; its maximum is attained at $G^{-1}v$.
+Increasing $G$ decreases each expression in braces. Restricting $x$
+to $\ran E$ proves inverse compression. For averaging, each fixed $x$
+satisfies
+$2\operatorname{Re}(v^*x)-x^*G(s)x\le v^*G(s)^{-1}v$.
+Integrate and take the maximum in $x$. The inverse family is measurable
+by inverse continuity and bounded by $a^{-1}I$, so its integral exists.
+Inverse continuity itself follows, near an invertible $G$, from
+$B^{-1}-G^{-1}=B^{-1}(G-B)G^{-1}$ and a uniform positive lower bound.
+\end{proof}
+
+\begin{lemma}[Inverse compression along a dense exhaustion]
+\label{lem:inverse-exhaustion}
+Let $\mathcal H$ be a Hilbert space, $aI\le G\le bI$ with $a>0$,
+and suppose a bounded inverse of $G$ is given. Let $V_n$ be increasing
+finite-dimensional subspaces with dense union, all containing $v$.
+If $G_n=P_{V_n}G|_{V_n}$, then
+$\ip{v}{G_n^{-1}v}\uparrow\ip{v}{G^{-1}v}$.
+\end{lemma}
+\begin{proof}
+Completing the square in the $G$ inner product gives the same
+variational formula as Lemma~\ref{lem:inverse-variational}, now on
+$\mathcal H$. Restricting to $V_n$ proves monotonicity and the upper
+bound. Choose $x_n\in V_n$ tending to $G^{-1}v$: density and nesting
+allow this by choosing successive approximants and retaining each until
+the next one is available. The deficit of its variational value is
+$\ip{x_n-G^{-1}v}{G(x_n-G^{-1}v)}\le b\|x_n-G^{-1}v\|^2\to0$.
+The finite-dimensional maximum is at least this value.
+\end{proof}
+
+\begin{lemma}[Projection and distance from a Gram matrix]
+\label{lem:gram-projection}
+Let $X:\C^d\to\mathcal H$ be injective, $G=X^*X$, and $F=\ran X$.
+Then $P_F=XG^{-1}X^*$. For $f\in\mathcal H$ and $g=X^*f$,
+\[
+ \dist(f,F)^2=\|f\|^2-g^*G^{-1}g.
+\]
+\end{lemma}
+\begin{proof}
+The candidate lies in $F$, and
+$X^*(f-XG^{-1}X^*f)=0$, so its residual is orthogonal to $F$.
+This characterizes the orthogonal projection. Pythagoras and
+$\|XG^{-1}g\|^2=g^*G^{-1}g$ prove the distance formula.
+\end{proof}
+
+\begin{lemma}[Relative Gram stability]\label{lem:gram-stability}
+If Hermitian $G_n\to G>0$ entrywise in a fixed positive finite dimension, then,
+for every $0<\eta<1$, eventually
+$(1-\eta)G\le G_n\le(1+\eta)G$. Thus a prefix bound $K$ for $G$
+gives the bound $\sqrt{(1+\eta)/(1-\eta)}K$ for $G_n$.
+If also $g_n\to g$ and $a_n\to a$, then
+$a_n-g_n^*G_n^{-1}g_n\to a-g^*G^{-1}g$.
+\end{lemma}
+\begin{proof}
+Choose $a_0>0$ with $G\ge a_0I$ by finite diagonalization.
+In dimension $d$, $\|M\|\le d\max_{ij}|M_{ij}|$, as follows by
+Cauchy--Schwarz in each row and summing the squared row bounds.
+Thus $\|G_n-G\|\to0$. Eventually this norm is at most $\eta a_0$,
+which bounds its quadratic forms between $-\eta G$ and $\eta G$.
+Use Lemma~\ref{lem:prefix-operations} and the inverse identity from
+Lemma~\ref{lem:inverse-variational} for the remaining assertions.
+\end{proof}
+
+\begin{lemma}[Operator norms]\label{lem:operator-norm}
+For a linear map between finite-dimensional Hilbert spaces,
+\[
+ \|A^*\|=\|A\|,\qquad \|A^*A\|=\|AA^*\|=\|A\|^2.
+\]
+For a real matrix, its operator norms on real and complex Euclidean
+space agree.
+\end{lemma}
+\begin{proof}
+Write $\|A\|=\sup_{\|x\|,\|y\|\le1}|\ip{y}{Ax}|$ to prove the
+adjoint identity. The equality
+$\|Ax\|^2=\ip{x}{A^*Ax}$ and submultiplicativity give both inequalities
+for $\|A^*A\|$; apply the result to $A^*$ for the other identity.
+If $A$ is real and $z=x+iy$, then
+$\|Az\|^2=\|Ax\|^2+\|Ay\|^2\le\|A\|_{\R}^2\|z\|^2$.
+Restriction to real vectors proves the reverse inequality.
+\end{proof}
+
+\begin{lemma}[An oblique projection]\label{lem:oblique}
+For a nonzero idempotent $P$ on a finite-dimensional Hilbert space,
+\[
+ \|P\|^2=1+\|P-P^*\|^2.
+\]
+If also $P\ne I$, then $\|I-P\|=\|P\|$.
+\end{lemma}
+\begin{proof}
+Relative to $\ran P\oplus(\ran P)^\perp$,
+$P=\left(\begin{smallmatrix}I&A\\0&0\end{smallmatrix}\right)$.
+Its skew part has squared norm $\|A\|^2$ by squaring its adjoint
+product. Also $PP^*=\diag(I+AA^*,0)$.
+Diagonalizing $AA^*\ge0$ on the nonzero range gives
+$\|PP^*\|=1+\|AA^*\|$, proving the formula by
+Lemma~\ref{lem:operator-norm}. Apply the same formula to $I-P$
+when it is nonzero; its skew part is the negative of that of $P$.
+\end{proof}
+
+\begin{lemma}[A coordinate projection through its two Gram matrices]
+\label{lem:dual-gram}
+Suppose $P=RS^*$ is a coordinate projection, where the columns of $R$
+are its selected range vectors and those of $S$ their biorthogonal
+dual vectors. If $C=R^*R>0$ and $D=S^*S$, then
+$\|P\|^2=\|C^{1/2}DC^{1/2}\|$.
+\end{lemma}
+\begin{proof}
+$V=RC^{-1/2}$ is an isometry onto $\ran R$, and
+$PP^*=V(C^{1/2}DC^{1/2})V^*$.
+Conjugation by this isometry preserves the norm on its range, and the
+operator is zero on the orthogonal complement. Use
+Lemma~\ref{lem:operator-norm}.
+\end{proof}
+
+\section{Explicit weighted products and information operators}
+\begin{definition}[A constant-marginal product]\label{def:product}
+Let $(S,\rho)$ be a probability space, let $Y$ be a finite torus, and
+let $W:S\times Y\to(0,1]$ be measurable with
+$\int_YW(s,y)\,dy=M>0$ for every $s$.
+Set $d\sigma=M^{-1}W\,d\rho\,dy$ and, for bounded measurable $u$, set
+\[
+ \iota h(s,y)=h(s),\qquad
+ \mathcal Eu(s)=M^{-1}\int_Yu(s,y)W(s,y)\,dy,\qquad
+ u^\circ=u-\iota\mathcal Eu.
+\]
+All functions used for this operation below are bounded.
+\end{definition}
+
+\begin{lemma}[Marginals and centering]\label{lem:centering}
+$\sigma$ is a probability, $\iota:L^2(\rho)\to L^2(\sigma)$ is an
+isometry, $\mathcal Eu\in L^2(\rho)$, and $u^\circ$ is orthogonal to
+$\iota L^2(\rho)$. In particular
+$\|u\|_\sigma^2=\|\mathcal Eu\|_\rho^2+\|u^\circ\|_\sigma^2$.
+\end{lemma}
+\begin{proof}
+Integrate $W/M$ first in $y$ to get mass one and the norm identity
+for $\iota$. Fiberwise Cauchy--Schwarz gives
+$|\mathcal Eu(s)|^2\le M^{-1}\int |u(s,y)|^2W(s,y)\,dy$,
+so the mean is square integrable. Its subtraction makes the weighted
+fiber integral zero. Fubini gives
+$\ip{\iota h}{u^\circ}=0$ first for bounded $h$ and then for all $L^2$
+functions by truncation and Cauchy--Schwarz. Pythagoras proves the last
+identity. This also shows independence of the chosen a.e. representatives.
+\end{proof}
+
+\begin{definition}[Mean and centered Gram data]\label{def:information}
+For a finite bounded family $(u_k)$ put
+$Xc=\sum c_ku_k$, $Tc=\sum c_k\mathcal Eu_k$, and
+$X_0c=\sum c_ku_k^\circ$. Then $X=\iota T+X_0$.
+When $C=X_0^*X_0>0$, define $J=TC^{-1}T^*$ on $L^2(\rho)$.
+This is a positive finite-rank operator with range in the span of
+the means.
+\end{definition}
+
+\begin{lemma}[The information identity]\label{lem:information}
+In Definition~\ref{def:information}, the full Gram matrix is
+$G=C+T^*T>0$. If $F=\ran X$, then
+\[
+ \iota^*P_F\iota=T(C+T^*T)^{-1}T^*=\Psi(J),\qquad
+ \Psi(J)=J(I+J)^{-1}.
+\]
+Moreover, for positive finite-rank $J,J'$,
+$\|\Psi(J)-\Psi(J')\|\le\|J-J'\|$.
+If $\|J\|\le a$, then $C\le G\le(1+a)C$.
+\end{lemma}
+\begin{proof}
+Lemma~\ref{lem:centering} makes the two summands of $X$ orthogonal,
+so $G=C+T^*T$ and $X^*\iota=T^*$. Apply
+Lemma~\ref{lem:gram-projection}. Put $A=TC^{-1/2}$. The identity
+$(I+AA^*)A=A(I+A^*A)$, followed by multiplication by inverses, gives
+$A(I+A^*A)^{-1}A^*=AA^*(I+AA^*)^{-1}$.
+Here the inverses on the base space are legitimate: restrict to the
+finite span of the means, diagonalize the positive operator, and use
+the identity on its orthogonal complement. Their norms are at most one.
+The same finite-dimensional reduction, now on the sum of the ranges
+of $J,J'$, justifies
+\[
+ \Psi(J)-\Psi(J')=(I+J)^{-1}(J-J')(I+J')^{-1}.
+\]
+Finally $\|TC^{-1/2}\|^2=\|J\|$ by
+Lemma~\ref{lem:operator-norm}, applied on the finite span of its range.
+Thus $T^*T\le aC$.
+\end{proof}
+
+\begin{lemma}[Independent auxiliary blocks]\label{lem:independent-blocks}
+For finitely many weights $W_i(s,y_i)$ as in Definition~\ref{def:product},
+use the density $\prod_i W_i/M_i$ over $\rho$ and the product torus.
+Each block keeps its original mean and centered Gram matrix.
+Centered vectors from different blocks are orthogonal. If their
+centered Gram matrices are positive, the concatenated data satisfy
+\[
+ C=\diag(C_i),\qquad J=\sum_i T_iC_i^{-1}T_i^*.
+\]
+The concatenated centered prefix bound is the maximum of the
+individual bounds.
+\end{lemma}
+\begin{proof}
+Integrating all unused variables gives one. For two centered factors
+in distinct variables, the fiber integral factors into their two
+zero means. This proves orthogonality and the diagonal formula by
+Fubini. Inverting that finite diagonal matrix proves the identity
+for $J$. Apply Lemma~\ref{lem:prefix-operations} to the orthogonal
+centered spans.
+\end{proof}
+
+\begin{lemma}[Joining small mean blocks]\label{lem:join}
+Let $V_0,H_1,\ldots,H_L$ be finite-dimensional orthogonal Hilbert
+spaces. Give each $H_i$ an ordered basis with bound $\sqrt Q$.
+Let $T_i:H_i\to V_0$ satisfy
+$\|\sum_iT_iT_i^*\|\le Z$ and $\|T_iT_i^*\|\le\eta$, where $Q>1+Z$.
+Replace each vector $x$ of block $i$ by $x+T_ix$.
+Every prefix containing all of $V_0$ has squared norm at most
+$Q+Q^2\eta/(Q-1-Z)$.
+\end{lemma}
+\begin{proof}
+For a cut inside block $i$, let $P$ be that block's prefix.
+Completed $H_j$ components split off as identities. On the others the
+operator is
+$\left(\begin{smallmatrix}A&-T_i(I-P)\\0&P\end{smallmatrix}\right)$,
+where $A$ sends $(v_0,(x_j)_{j>i})$ to $v_0-\sum_{j>i}T_jx_j$.
+Hence $AA^*=I+\sum_{j>i}T_jT_j^*$ and $\|A\|^2\le1+Z$.
+Also $\|P\|^2\le Q$ and $\|T_i(I-P)\|^2\le Q\eta$:
+use Lemma~\ref{lem:oblique} for $P\ne0,I$ and check $0,I$ directly.
+For $h=(Q-1-Z)/(1+Z)>0$, the scalar Cauchy--Schwarz inequality gives
+$\|a-b\|^2\le(1+h)\|a\|^2+(1+h^{-1})\|b\|^2$.
+It bounds the squared image of $(x,y)$ by
+$Q\|x\|^2+(Q+Q^2\eta/(Q-1-Z))\|y\|^2$.
+\end{proof}
+
+\section{Scalar data and the sharp row estimate}
+\subsection{Scalar data}
+\begin{definition}[Measurable scalar data]\label{def:scalar}
+Scalar data consist of a finite torus, a measurable even weight
+$c_0\le w\le1$ pointwise for some $c_0>0$, and an ordered nonempty
+list $\chi_1,\ldots,\chi_d$ of distinct nonconstant characters.
+Evenness means $w(-y)=w(y)$. Write
+\[
+ \begin{gathered}
+ m=\int w,\qquad\epsilon=1-m,\\
+ B=\begin{pmatrix}m&b^*\\b&G\end{pmatrix},\qquad
+ b_k=\int\overline{\chi_k}w,\\
+ A=G-bb^*/m,\qquad C=A/m,\qquad a=b/m.
+ \end{gathered}
+\]
+Here $B$ is the Gram matrix of $(1,\chi_1,\ldots,\chi_d)$ in
+unnormalized $L^2(w)$; $C$ is the centered Gram matrix under $w/m$.
+The gain is $Z=a^*C^{-1}a$.
+Polynomial scalar data additionally require $w$ to be a character polynomial.
+\end{definition}
+
+\begin{lemma}[Scalar identities]\label{lem:scalar-identities}
+For scalar data, $0<B\le I$, all its diagonal entries are $m$, and
+$B$ is real symmetric. The matrices $A,C$ are positive definite.
+For a polynomial with coefficient column $c$ the mean under $w/m$ is
+$a^*c$ and its variance is $c^*Cc$. Moreover
+\[
+ mB^{-1}=
+ \begin{pmatrix}1+Z&-a^*C^{-1}\\-C^{-1}a&C^{-1}\end{pmatrix},
+ \qquad m(B^{-1})_{00}=1+Z.
+\]
+If $Z>0$, the least variance among polynomials of mean one is $1/Z$,
+attained at $c=C^{-1}a/Z$. The squared norm of the projection of $1$
+onto the nonconstant span under $w/m$ is $Z/(1+Z)$.
+The squared norm of the first augmented coordinate prefix is $1+Z$.
+\end{lemma}
+\begin{proof}
+Haar orthogonality and $c_0\le w\le1$ give $c_0I\le B\le I$.
+Unimodularity gives its diagonal. Inverting all torus coordinates
+conjugates every matrix entry while leaving its integral unchanged,
+so the entries are real. Completing the first coordinate's square
+in the quadratic form of $B$ proves $A>0$.
+Expansion of the variance gives $C$. Multiplication verifies the
+displayed inverse formula. Cauchy--Schwarz in the $C$ metric gives
+$|a^*c|^2\le Zc^*Cc$, with equality at the displayed minimizer.
+Since $(C+aa^*)C^{-1}a=(1+Z)a$, the projection formula of
+Lemma~\ref{lem:gram-projection} gives $Z/(1+Z)$.
+For the first augmented prefix use
+Lemma~\ref{lem:dual-gram} with the one-by-one matrices $m$ and
+$(B^{-1})_{00}$.
+\end{proof}
+
+\subsection{Finite-dimensional estimates}
+\begin{lemma}[A real skew arrowhead]\label{lem:arrowhead}
+For a real skew-symmetric $n$-by-$n$ matrix $S$, $n\ge1$, a real
+column $b$, and $s\ge0$,
+\[
+ \left\|\begin{pmatrix}S&sb\\-sb^T&0\end{pmatrix}\right\|^2
+ =\lambda_{\max}(-S^2+s^2bb^T).
+\]
+If $0\le r\le s$, the left-hand squared norm increases from $r$ to $s$
+by at most $(s^2-r^2)\|b\|^2$.
+\end{lemma}
+\begin{proof}
+Denote the skew block matrix by $T_s$. Real and complex norms agree by
+Lemma~\ref{lem:operator-norm}. The Hermitian matrix $iT_s$ has spectrum
+symmetric about zero, because complex conjugation sends it to $-iT_s$.
+For $q>\|S\|^2$, put $h=\sqrt q$. Thus $\|T_s\|\le h$ is equivalent
+to $hI-iT_s\ge0$. Its upper-left block $hI-iS$ is positive definite.
+Completing the block square, or taking its Schur complement, gives
+\[
+ h-s^2b^T(hI-iS)^{-1}b\ge0.
+\]
+Since $(hI-iS)^{-1}=(hI+iS)(qI+S^2)^{-1}$, and
+$S(qI+S^2)^{-1}$ is real skew, this is
+$s^2b^T(qI+S^2)^{-1}b\le1$.
+Conjugating by the square root of $qI+S^2>0$ makes this equivalent to
+$qI+S^2-s^2bb^T\ge0$. This last step is the elementary fact
+$I-zz^*\ge0$ exactly when $\|z\|^2\le1$.
+Both squared norms being compared are at least $\|S\|^2$:
+restrict $T_s$ to vectors $(x,0)$, and use $-S^2+s^2bb^T\ge-S^2$.
+Their identical upper bounds for every $q>\|S\|^2$ prove the equality.
+Finally the largest Rayleigh quotient increases by at most
+$(s^2-r^2)\|b\|^2$ on adding that rank-one matrix.
+\end{proof}
+
+\begin{lemma}[A two-Gram interpolation bound]\label{lem:row-matrix}
+Let $B$ be real positive definite with $B\le I$, put $H=B^{-1}$,
+and suppose $B_{jj}=m$. Let $P=\{0,\ldots,j-1\}$ and
+$F_{j-1}=\|B^{1/2}E_PB^{-1/2}\|^2$, except that $F_{-1}=1$.
+Put $F_j=\|B^{1/2}E_{P\cup\{j\}}B^{-1/2}\|^2$.
+For $0\le t\le1$ define
+\[
+ C_t=\begin{pmatrix}B_{PP}&\sqrt t\,B_{Pj}\\
+ \sqrt t\,B_{jP}&1-t+tm\end{pmatrix},\quad
+ D_t=\begin{pmatrix}H_{PP}&\sqrt t\,H_{Pj}\\
+ \sqrt t\,H_{jP}&1-t+tH_{jj}\end{pmatrix}.
+\]
+Then
+\[
+ \|C_t^{1/2}D_tC_t^{1/2}\|
+ \le\max(F_{j-1},F_j)+t(1-t)(1-m)(H_{jj}-1).
+\]
+\end{lemma}
+\begin{proof}
+Set $x=B^{1/2}e_j$, $y=B^{-1/2}e_j$,
+$P_0=B^{1/2}E_PB^{-1/2}$ and $P_1=P_0+xy^T$.
+Then $y^Tx=1$, $P_0x=0$, and $y^TP_0=0$.
+With $s=\sqrt{t(1-t)}$, direct multiplication shows that
+\[
+ R_t=\begin{pmatrix}P_0+txy^T&sx\\sy^T&1-t\end{pmatrix}
+\]
+is a nonzero projection. Its range columns are
+$(B^{1/2}e_k,0)$ for $k<j$ and $(\sqrt t\,x,\sqrt{1-t})$;
+its dual columns replace $B^{1/2},x$ by $B^{-1/2},y$.
+They are biorthogonal and independent even at $t=0,1$, and their
+Gram matrices are $C_t,D_t$. Lemma~\ref{lem:dual-gram} identifies
+the left side with $\|R_t\|^2$.
+
+Let $S_i=P_i-P_i^T$, $A_0=S_1-S_0=xy^T-yx^T$ and $v=x-y$.
+Put $a_0^2=mH_{jj}-1\ge0$, by Cauchy--Schwarz. Then
+\[
+ R_t-R_t^T=
+ \begin{pmatrix}(1-t)S_0+tS_1&sv\\-sv^T&0\end{pmatrix},
+ \quad
+ \|v\|^2-a_0^2=(1-m)(H_{jj}-1)\ge0.
+\]
+If $a_0>0$, multiplication on $\spn(x,y)$ gives $A_0^2=-a_0^2I$.
+Thus $u=-A_0v/(a_0\|v\|)$ is a unit vector and
+$A_0u=a_0v/\|v\|$.
+Conjugate $\diag(S_0,S_1)$ by
+\[
+ Q=\begin{pmatrix}\sqrt{1-t}\,I&\sqrt t\,I\\
+ -\sqrt t\,I&\sqrt{1-t}\,I\end{pmatrix}.
+\]
+It is orthogonal. Compress its second block to $\R u$.
+The resulting skew matrix has upper-left block $(1-t)S_0+tS_1$,
+last column $sa_0v/\|v\|$, and norm at most
+$\max(\|S_0\|,\|S_1\|)$.
+By Lemma~\ref{lem:arrowhead}, enlarging that column to $sv$ costs
+at most $s^2(\|v\|^2-a_0^2)$ in squared norm.
+If $a_0=0$, equality in Cauchy--Schwarz gives $A_0=0$;
+the same bound follows from that lemma starting with last column zero.
+Now use Lemma~\ref{lem:oblique} for $R_t,P_1$, and for $P_0$ when
+it is nonzero. When $P_0=0$, the sentinel value
+$F_{-1}=1=1+\|S_0\|^2$ is a valid upper bound.
+\end{proof}
+
+\begin{lemma}[One finite-rank projection and one orthogonal projection]
+\label{lem:two-projections}
+Let $\Pi,D$ be orthogonal projections on a Hilbert space, with $\Pi$
+of finite rank. The space decomposes orthogonally into two-dimensional
+invariant blocks on which
+\[
+ \Pi=\begin{pmatrix}1&0\\0&0\end{pmatrix},\quad
+ D=\begin{pmatrix}t&\sqrt{t(1-t)}\\
+ \sqrt{t(1-t)}&1-t\end{pmatrix}\quad(0<t<1),
+\]
+and common eigenspaces with eigenvalues zero or one.
+Only the common eigenspaces can be infinite dimensional.
+\end{lemma}
+\begin{proof}
+The finite-dimensional space $\ran\Pi+D(\ran\Pi)$ is invariant under
+both projections; self-adjointness also makes its orthogonal complement
+invariant, and $\Pi=0$ there. Diagonalize $\Pi D\Pi$ on $\ran\Pi$.
+For a unit eigenvector $v$ with eigenvalue $0<t<1$, let
+$z=(Dv-tv)/\sqrt{t(1-t)}$. Then
+$\Pi z=0$, $\|z\|=1$, and
+$Dv=tv+\sqrt{t(1-t)}z$.
+Applying $D$ again gives
+$Dz=\sqrt{t(1-t)}v+(1-t)z$.
+For distinct orthonormal eigenvectors $v_i,v_j$,
+$\ip{Dv_i}{Dv_j}=\ip{v_i}{Dv_j}=t_j\delta_{ij}$,
+which proves orthogonality of the resulting blocks.
+Eigenvalues zero and one give respectively $Dv=0$ and $Dv=v$.
+On the remaining invariant orthogonal complement $\Pi=0$; split it
+as $\ran D\oplus\ker D$ to finish.
+\end{proof}
+
+\subsection{Activation on a rare set}
+\begin{lemma}[A symmetric rare set]\label{lem:rare-set}
+For $0<p<1$ the circle has a measurable symmetric set $D$ of Haar
+measure $p$.
+\end{lemma}
+\begin{proof}
+Take the image of $[-p/2,p/2]$ in $\R/\Z$. It is symmetric.
+Identifying the circle with $[-1/2,1/2)$ computes its measure as its
+interval length; endpoints are null.
+\end{proof}
+
+\begin{lemma}[Sharp activated row prefixes]\label{lem:row-split}
+For scalar data and a symmetric $D\subset\T$ of measure $p$, put
+$W(x,y)=1-\mathbf1_D(y)(1-w(x))$.
+Let $Y$ be any finite list of distinct circle characters starting with
+$1$. Order the characters $\chi_j\psi$ by $j=0,\ldots,d$ and then by
+$\psi\in Y$, with $\chi_0=1$.
+If $F_j$ is the squared norm of the old augmented prefix through
+$\chi_j$ and $F_{-1}=1$, a new prefix ending in row $j$ has squared
+norm at most
+\[
+ \max(F_{j-1},F_j)+\frac{\epsilon}{4}\bigl((B^{-1})_{jj}-1\bigr).
+\]
+The corresponding centered prefix has the same upper bound.
+\end{lemma}
+\begin{proof}
+Use the Hilbert space of $(d+1)$-tuples of Haar $L^2(\T)$ functions.
+Its activated norm has Gram operator
+\[
+ \mathcal G=I+(B-I)D,\qquad
+ \mathcal G^{-1}=I+(B^{-1}-I)D,
+\]
+where $D$ multiplies every component by $\mathbf1_D$.
+These formulas follow pointwise inside and outside $D$; in particular
+the norm is equivalent to the ordinary sum-of-squares norm.
+The synthesis $(F_j)_j\mapsto\sum_j\chi_j(x)F_j(y)$ identifies this
+norm with the $W$-weighted norm by integration first in $x$.
+On this full tuple space the prefix keeps all preceding rows, applies
+the finite Fourier projection $\Pi$ onto the selected characters in
+row $j$, and kills later rows. Its restriction is the prefix in question.
+
+Apply Lemma~\ref{lem:two-projections} to $\Pi$ and multiplication by
+$\mathbf1_D$ on $L^2(\T)$. The resulting decomposition is orthogonal
+also for $\mathcal G$ and is invariant under the prefix.
+Common eigenspaces give either an ordinary coordinate projection,
+or an old $B$-metric prefix, so have squared bounds
+$1,F_{j-1},F_j$.
+On a two-dimensional block choose a unit vector in $\ran D$ and one
+in $\ker D$, so the selected vector in $\ran\Pi$ has coordinates
+$(\sqrt t,\sqrt{1-t})$. For each completed row the $\ker D$ coordinate
+is an orthogonal identity summand, also in the dual Gram matrix.
+Discard these identity summands. The remaining range and dual columns
+have exactly the matrices $C_t,D_t$ in Lemma~\ref{lem:row-matrix}:
+completed $\ran D$ coordinates give $B_{PP},(B^{-1})_{PP}$, the
+selected row gives the factors $\sqrt t$ and diagonal $1-t+tm$.
+Lemmas~\ref{lem:dual-gram} and \ref{lem:row-matrix} give the bound,
+since $t(1-t)\le1/4$ and $F_j\ge1$.
+Summing the squared bounds over the orthogonal blocks controls the
+full tuple operator. Restrict to the finite product family, then apply
+the quotient argument in Lemma~\ref{lem:prefix-operations} to its
+initial constant to obtain the centered bound.
+\end{proof}
+
+\section{Constructing scalar data with arbitrarily small loss}
+\subsection{Activation, truncation, and copying}
+\begin{lemma}[Activated inverse bounds and gain limit]\label{lem:rare-data}
+Use scalar data with $0<\epsilon<1$, $Z>0$ and activation set of
+measure $0<p<1$. Put $M=1-p\epsilon$ and $H=B^{-1}$.
+For a finite product family as in Lemma~\ref{lem:row-split}, let
+$A_W$ be its unnormalized centered Gram matrix. A nonconstant product
+in old row $j$ satisfies
+\[
+ (A_W^{-1})_{kk}\le1+p(H_{jj}-1),\qquad
+ \|A_W^{-1}\|\le\|B^{-1}\|.
+\]
+For $Y_N=(1,e_1,e_{-1},\ldots,e_N,e_{-N})$ the product gain $z_N$
+increases to the positive number
+\[
+ z_p=M[1+p(H_{00}-1)]-1
+ =\frac p{1-\epsilon}
+   \{Z+\epsilon^2-p\epsilon(Z+\epsilon)\}.
+ \tag{A}\label{eq:rare-gain}
+\]
+For any $0<\alpha<1$ one can therefore choose a finite $Y_N$ with
+$(1-\alpha)z_p\le z_N\le z_p$.
+\end{lemma}
+\begin{proof}
+The finite augmented Gram matrix is a compression of $\mathcal G$
+from Lemma~\ref{lem:row-split}. Its centered inverse is the
+nonconstant principal block of its augmented inverse, by
+Lemma~\ref{lem:scalar-identities}. Inverse compression bounds it by
+the corresponding block of $\mathcal G^{-1}$.
+For a coordinate character $\psi$, $\int_D|\psi|^2=p$, giving the
+diagonal bound. Since $B\le I$, $\|B^{-1}\|\ge1$; the pointwise
+inverse formula gives the norm bound.
+
+The spaces consisting of tuples with each entry in $\spn Y_N$ are
+nested and dense: use the Mathlib totality of the circle characters
+and the finite number of tuple entries. The activated norm is
+equivalent to the original one. Apply Lemma~\ref{lem:inverse-exhaustion}
+to the unit coordinate vector corresponding to the constant in row
+zero. Its full inverse quadratic form is $1+p(H_{00}-1)$.
+Lemma~\ref{lem:scalar-identities} converts this into the gain limit.
+Substitute $H_{00}=(1+Z)/(1-\epsilon)$ to obtain (A).
+Its braces equal $Z(1-p\epsilon)+\epsilon^2(1-p)>0$.
+Monotone convergence to this positive limit permits the finite choice.
+\end{proof}
+
+\begin{lemma}[Copies of scalar data]\label{lem:scalar-copies}
+Take $L\ge1$ independent copies of scalar data with mass $M$,
+normalized mean column $a$, centered matrix $C$, and gain $z$.
+Use the product weight and concatenate the nonconstant lists.
+The new data have
+\[
+ m'=M^L,\quad C'=\diag(C,\ldots,C),\quad
+ a'=(a,\ldots,a),\quad Z'=Lz.
+\]
+Their centered bound is the old centered bound. If it is $\sqrt Q$
+and $Q>1+Z'$, every augmented prefix has squared norm at most
+$Q+Q^2z/(Q-1-Z')$.
+\end{lemma}
+\begin{proof}
+All copied characters are nonconstant, and disjoint variable blocks
+make their full frequencies distinct. The product weight is even and
+bounded below by a positive constant. Integrating the unused
+probability factors gives the displayed formulas, by
+Lemma~\ref{lem:independent-blocks}.
+For the last bound, regard the normalized constant functions as
+$V_0$ and each centered span as $H_i$. The mean map on $H_i$ has
+squared norm $z$ by Cauchy--Schwarz in its centered metric.
+The sum of these rank-one mean operators has norm $Lz=Z'$.
+Apply Lemma~\ref{lem:join}. The first prefix containing just the
+constant is included in that lemma.
+\end{proof}
+
+\subsection{The numerical induction}
+\begin{lemma}[Initial scalar data]\label{lem:scalar-initial}
+For $0<\delta\le1$ put $a=\delta/400$ and
+$w_0(y)=1-a+a\cos(2\pi y)$, with the single nonconstant character
+$e^{2\pi iy}$. Then
+\[
+ \epsilon_0=a,\quad B_0=\begin{pmatrix}1-a&a/2\\a/2&1-a\end{pmatrix},
+ \quad Z_0=\frac{a^2}{4-8a+3a^2},\quad
+ a^2/4\le Z_0\le a^2/3.
+\]
+The centered bound is one,
+$B_0\ge a^2I$, and $(B_0^{-1})_{11}\le1+2a$.
+\end{lemma}
+\begin{proof}
+$1-2a\le w_0\le1$, and elementary Haar moments give the matrix.
+Its eigenvalues are $1-a\pm a/2$, so the lower bound follows from
+$a\le1/400$. Inverting the two-by-two matrix gives the gain and
+\[
+ (B_0^{-1})_{11}-1
+ =\frac{a(1-3a/4)}{1-2a+3a^2/4}\le2a.
+\]
+The gain denominator lies between three and four.
+A one-vector centered family has prefix bound one.
+\end{proof}
+
+\begin{lemma}[Choosing one quantitative step]\label{lem:scalar-numerics}
+Suppose $0<\epsilon\le a\le1/400$ and
+$3a^2/16\le Z\le Z_0$, and define $z_p$ by (A).
+For any $C_0\ge0$ and any integer $n\ge0$,
+choose $p>0$ so that
+\[
+ p\le1/100,\quad p\le\epsilon/(Z+\epsilon),\quad
+ pC_0\le\epsilon/100,\quad z_p\le Z_0\,2^{-n-3}.
+ \tag{B}\label{eq:scalar-choice}
+\]
+Such a choice exists. If
+$(1-\epsilon/4)z_p\le z\le z_p$ and $L=\lfloor Z/z\rfloor$, with
+$Z\ge3Z_0/4$, then $L\ge1$ and, for
+$Z'=Lz$, $\epsilon'=1-(1-p\epsilon)^L$,
+\[
+ 0\le Z-Z'<z,\qquad
+ \frac1{10}<Lp\le1-\frac{3\epsilon}{4},\qquad
+ \frac{\epsilon}{12}\le\epsilon'\le\epsilon-\frac{3\epsilon^2}{4}.
+ \tag{C}\label{eq:scalar-step-numbers}
+\]
+\end{lemma}
+\begin{proof}
+Formula (A) is continuous in $p$ and tends to zero as $p\downarrow0$;
+every other constraint in (B) holds for sufficiently small positive $p$.
+The condition $p\le\epsilon/(Z+\epsilon)$ gives
+\[
+ \frac{pZ}{1-\epsilon}\le z_p
+ \le\frac{p(Z+\epsilon^2)}{1-\epsilon}.
+\]
+Since $z\le Z_0/8$ and $Z\ge3Z_0/4$, $L\ge1$.
+The floor inequalities give $0\le Z-Lz<z$ and
+\[
+ \frac{(1-\epsilon)Z}{Z+\epsilon^2}-p<Lp
+ \le\frac{1-\epsilon}{1-\epsilon/4}\le1-3\epsilon/4.
+\]
+The leftmost expression is at least
+$(1-1/400)\,3/19-1/100=1121/7600>1/10$.
+For $0<t<1$ and $L\ge1$,
+$Lt/(1+Lt)\le1-(1-t)^L\le Lt$:
+the upper bound is Bernoulli's inequality, and the lower follows
+from $(1-t)^{-L}\ge1+Lt$. Apply this with $t=p\epsilon$.
+The lower estimate exceeds $\epsilon/(10(1+\epsilon))\ge\epsilon/12$;
+the upper estimate is at most $\epsilon(1-3\epsilon/4)$.
+\end{proof}
+
+\begin{lemma}[Preserving inverse estimates]\label{lem:scalar-inverse-step}
+Take scalar data with loss $\epsilon$ and gain $Z$ satisfying
+Lemma~\ref{lem:scalar-numerics}, and suppose $Z_0\le a^2/3$.
+Suppose their augmented Gram matrix satisfies
+$B\ge\epsilon^2I$ and
+$(B^{-1})_{kk}\le1+2\epsilon$ for $k\ne0$.
+Take $C_0=\max_j((B^{-1})_{jj}-1)$, including $j=0$.
+Activate, choose the finite product family with gain $z$, and take
+$L$ independent copies as above. Their augmented matrix $B'$ satisfies
+\[
+ B'\ge(\epsilon')^2I,\qquad
+ ((B')^{-1})_{kk}\le1+2\epsilon'\quad(k\ne0).
+\]
+\end{lemma}
+\begin{proof}
+Put $M=1-p\epsilon$ and $h=\|B^{-1}\|\le\epsilon^{-2}$.
+If $A_W$ is the one-copy unnormalized centered matrix, then the
+new normalized centered inverse is
+\[
+ D_0=M\diag(A_W^{-1},\ldots,A_W^{-1})\le MhI.
+\]
+Its diagonal entries are at most $M(1+pC_0)$ by
+Lemma~\ref{lem:rare-data}. With new mean column $\mathbf a$,
+$\mathbf a^*D_0\mathbf a=Z'\le Z_0$, and
+Lemma~\ref{lem:scalar-identities} gives
+\[
+ (1-\epsilon')(B')^{-1}
+ =\begin{pmatrix}1+Z'&-\mathbf a^*D_0\\-D_0\mathbf a&D_0\end{pmatrix}.
+\]
+For a nonconstant diagonal entry, subtracting one gives the bound
+\[
+ \frac{\epsilon'+\epsilon/100}{1-\epsilon'}
+ \le\frac{\epsilon'+12\epsilon'/100}{9/10}
+ =\frac{56}{45}\epsilon'<2\epsilon'.
+\]
+Here $\epsilon'\le a<1/10$ and $\epsilon\le12\epsilon'$.
+For the operator norm use Cauchy--Schwarz in the $D_0$ metric.
+The quadratic form of the displayed matrix is bounded by the
+two-by-two form with diagonal $1+Z',Mh$ and off-diagonal
+$\sqrt{MhZ'}$. Its largest eigenvalue is at most its trace, whence
+$\|(B')^{-1}\|\le(h+1+Z_0)/(1-\epsilon')$.
+The function $(1-x)/x^2$ decreases on $(0,1)$.
+Using (C) and subtracting explicitly,
+\[
+ \frac{1-\epsilon'}{(\epsilon')^2}-\frac1{\epsilon^2}
+ \ge\frac{1/2+3\epsilon/16}{\epsilon(1-3\epsilon/4)^2}
+ \ge\frac1{2\epsilon}>1+Z_0.
+\]
+The last inequality uses $\epsilon\le1/400$ and $Z_0\le a^2/3$.
+This bounds the inverse norm by $(\epsilon')^{-2}$, proving the floor.
+\end{proof}
+
+\begin{lemma}[Preserving prefix estimates]\label{lem:scalar-prefix-step}
+Let $0<\delta\le1$ and $a=\delta/400$.
+Suppose the old scalar family is an independent-copy concatenation
+with centered bound $\sqrt Q$, total gain $Z$, and each block's gain
+at most $\eta$. Suppose
+\[
+ 1+\delta/4\le Q<1+\delta/2,\quad Z\le Z_0\le a^2/3,\quad
+ 0<\epsilon\le a,
+\]
+and its nonconstant inverse diagonals are at most $1+2\epsilon$.
+The activation and copying step above produces a centered bound
+$\sqrt{Q'}$, where
+$Q'=Q+20\eta/\delta+\epsilon^2/2$.
+The old augmented squared prefix norms are at most $Q+20\eta/\delta$.
+\end{lemma}
+\begin{proof}
+Each centered block inherits the bound $\sqrt Q$ by restriction.
+$Q-1-Z>\delta/8$ and $Q^2\le(1+\delta/2)^2\le9/4$, so
+$Q^2/(Q-1-Z)<20/\delta$. Lemma~\ref{lem:join} bounds the old
+augmented prefixes. For a nonconstant activated row,
+Lemma~\ref{lem:row-split} adds at most $\epsilon^2/2$.
+For row zero its sharper bound, using the first-prefix identity, is
+\[
+ 1+Z+\frac{\epsilon(Z+\epsilon)}{4(1-\epsilon)}
+ \le1+a^2<Q.
+\]
+Indeed the increment above one is at most
+$a^2[1/3+(1+a/3)/(4(1-a))]\le2a^2/3<a^2$, since $a\le1/5$.
+Centering preserves each tail-prefix bound, and independent centered
+copies are orthogonal. Apply
+Lemmas~\ref{lem:prefix-operations} and \ref{lem:scalar-copies}.
+\end{proof}
+
+\begin{proposition}[Measurable scalar supply]\label{prop:raw-scalar}
+Fix $0<\delta\le1$ and $a,Z_0$ as in
+Lemma~\ref{lem:scalar-initial}. There exist scalar data indexed by
+$n\in\N$ such that
+\[
+ \epsilon_n\downarrow0,\quad 3Z_0/4\le Z_n\le Z_0,\quad
+ B_n\ge\epsilon_n^2I,\quad
+ (B_n^{-1})_{kk}\le1+2\epsilon_n\ (k\ne0).
+\]
+Both augmented and centered families have a prefix bound strictly
+smaller than $1+\delta$.
+\end{proposition}
+\begin{proof}
+Start with Lemma~\ref{lem:scalar-initial}, $Q_0=1+\delta/4$,
+and one block of gain $\eta_0=Z_0$. At step $n$ use (B), choose
+the finite truncation by Lemma~\ref{lem:rare-data}, and take the
+number of copies specified in Lemma~\ref{lem:scalar-numerics}.
+Set $\eta_{n+1}=z$ and
+$Q_{n+1}=Q_n+20\eta_n/\delta+\epsilon_n^2/2$.
+The copy structure is retained, and the preceding three lemmas give
+all inverse and prefix assertions at the next stage.
+
+We verify that their hypotheses remain available throughout.
+The gain loss is at most $Z_0\,2^{-n-3}$, so
+$0\le Z_0-Z_n\le Z_0(1-2^{-n})/4$.
+Also $\epsilon_{n+1}\le\epsilon_n-3\epsilon_n^2/4$ and
+$\epsilon_{n+1}\ge\epsilon_n/12>0$.
+Summing gives $\sum_n\epsilon_n^2\le4a/3$; monotonicity then forces
+$\epsilon_n\to0$. Further,
+$\sum_n\eta_n\le5Z_0/4<3Z_0/2$.
+Consequently
+\[
+ Q_n\le1+\delta/4+30Z_0/\delta+2a/3
+ \le1+\delta/4+\delta/16000+\delta/600<1+\delta/2.
+\]
+This closes the induction on $Q_n$.
+The augmented squared bound is at most
+$Q_n+20\eta_n/\delta<1+\delta/2+\delta/24000<(1+\delta)^2$;
+the centered squared bound is at most $Q_n$.
+Every step uses finitely many coordinates and retains a positive
+pointwise lower bound on its weight. No common lower bound across
+all stages is asserted.
+\end{proof}
+
+\subsection{Finite smoothing and exact gain}
+\begin{lemma}[The finite Fejer kernel]\label{lem:fejer}
+On $\T$ define
+$K_N(y)=(N+1)^{-1}|\sum_{j=0}^N e^{2\pi ijy}|^2$.
+It is nonnegative, even, has integral one, and equals
+\[
+ K_N(y)=\sum_{|l|\le N}\left(1-\frac{|l|}{N+1}\right)e^{2\pi ily}.
+\]
+On $\T^I$ use the product of these kernels. Its Fourier multiplier
+at $k\in\Z^I$ is
+$\gamma_N(k)=\prod_{i\in I}(1-|k_i|/(N+1))_+$,
+which tends to one for each fixed $k$.
+\end{lemma}
+\begin{proof}
+Expand the squared sum. For each difference $l=j-j'$ there are
+$N+1-|l|$ pairs if $|l|\le N$ and none otherwise.
+Haar orthogonality gives the integral, and the coefficients prove
+evenness. Positivity follows from the defining square. Products,
+Fubini, and the finite number of coordinates prove all remaining claims.
+\end{proof}
+
+\begin{lemma}[Smoothing one fixed scalar datum]\label{lem:smoothing}
+For scalar data on $\T^I$ set $w_N=w*K_N$. Its mass equals that of $w$,
+it is an even character polynomial with the same positive lower bound
+and upper bound one, and its augmented Gram matrix satisfies
+\[
+ B_N=\int U(y)^*BU(y)K_N(y)\,dy,\qquad
+ U(y)=\diag(1,\chi_1(y),\ldots,\chi_d(y)).
+\]
+Every augmented prefix bound and every lower bound $B\ge aI$
+are preserved. Also $(B_N^{-1})_{kk}\le(B^{-1})_{kk}$ and
+$B_N\to B$, so the gains converge.
+\end{lemma}
+\begin{proof}
+Positivity, the lower bound and the upper bound follow because convolution
+is a probability average. Translation invariance and Fubini preserve
+mass. Expanding the finite kernel and translating the integration
+variable writes $w_N$ as a finite character sum. Inversion of all
+coordinates proves evenness.
+The $(i,j)$ entry of $B_N$ is the corresponding entry of $B$
+multiplied by $\gamma_N(k_j-k_i)$, which proves the averaging formula
+and entrywise convergence.
+Every coordinate projection commutes with $U(y)$, so averaging
+$D_kBD_k\le K^2B$ preserves that inequality, and also preserves $aI$.
+Lemma~\ref{lem:inverse-variational} gives
+$B_N^{-1}\le\int U(y)^*B^{-1}U(y)K_N(y)\,dy$;
+its diagonal is that of $B^{-1}$.
+Inverse continuity and the fixed mass in
+Lemma~\ref{lem:scalar-identities} prove convergence of gain.
+The centered prefix bound follows by projecting off the initial constant.
+\end{proof}
+
+\begin{lemma}[Tuning a scalar gain]\label{lem:tuning}
+Suppose polynomial scalar data have loss $\epsilon>0$, gain $Z>z>0$,
+augmented bound $K\ge1$, and
+$B\ge\epsilon^2I$, $(B^{-1})_{kk}\le1+2\epsilon$ for $k\ne0$.
+There are polynomial scalar data on the same characters with gain
+exactly $z$, loss $0<\epsilon'\le\epsilon$, the same bound $K$ for
+augmented and centered families, and the corresponding inverse estimates.
+\end{lemma}
+\begin{proof}
+For $0\le t\le1$ put $w_t=1-t+tw$, so
+$B_t=(1-t)I+tB$ and $\epsilon_t=t\epsilon$.
+This remains a positive polynomial weight. Since $K\ge1$,
+the prefix inequality holds for the convex combination of $I$ and $B$.
+Also $B_t\ge(1-t+t\epsilon^2)I\ge(t\epsilon)^2I$.
+Inverse averaging with two points gives
+$(B_t^{-1})_{kk}\le1-t+t(B^{-1})_{kk}\le1+2t\epsilon$.
+Its gain is continuous, zero at $t=0$, and $Z>z$ at $t=1$.
+The intermediate value theorem gives a solution $t>0$.
+Centering is covered by Lemma~\ref{lem:prefix-operations}.
+\end{proof}
+
+\begin{proposition}[Polynomial scalar supply]\label{prop:scalar-supply}
+For $0<\delta\le1$ let $a=\delta/400$,
+$Z_0=a^2/(4-8a+3a^2)$, and $c_\delta=Z_0/2$.
+For every $0<z<c_\delta$ and $\eta>0$, there are polynomial scalar data
+with gain $z$ and loss $0<\epsilon<\eta$ such that
+\[
+ \begin{gathered}
+ \PB_K(1,\chi),\quad \PB_K(\chi^\circ)
+ \quad\hbox{for some }K<1+\delta,\\
+ B\ge\epsilon^2I,\quad (B^{-1})_{kk}\le1+2\epsilon\ (k\ne0).
+ \end{gathered}
+\]
+\end{proposition}
+\begin{proof}
+Choose a datum in Proposition~\ref{prop:raw-scalar} with loss less
+than $\eta$. Smooth this fixed finite datum. Its gains tend to a
+value at least $3Z_0/4$, so for sufficiently large smoothing index
+the gain exceeds $Z_0/2$. Lemma~\ref{lem:smoothing} preserves the
+prefix and inverse estimates. Apply Lemma~\ref{lem:tuning} to obtain
+the exact gain. Its positive loss does not increase.
+\end{proof}
+
+\section{A directional finite construction}
+\subsection{Response and scale}
+\begin{lemma}[Uniform scalar response estimates]\label{lem:response}
+Fix $\delta$ and $0<z<c_\delta$, and consider any datum from
+Proposition~\ref{prop:scalar-supply} with loss $\epsilon$.
+For $0\le\beta\le1$ put
+\[
+ \Phi(\beta)=(1-\beta)^2b^*[\beta I+(1-\beta)G]^{-1}b.
+\]
+This function is nonnegative and decreasing. For all sufficiently small
+$\epsilon$, uniformly over these data,
+\[
+ \Phi(\epsilon^2)\ge\frac{z}{8(1+z)},\qquad
+ \Phi(\sqrt\epsilon)\le\sqrt\epsilon,\qquad
+ \Phi(R\beta)\ge\frac{\Phi(\beta)}{4R}
+ \quad(R\ge1,\ 0\le R\beta\le1/2).
+\]
+\end{lemma}
+\begin{proof}
+Diagonalize $0<G\le I$. Each summand of $\Phi$ is a nonnegative
+multiple of $(1-\beta)^2/(\beta+(1-\beta)g)$, with $0<g\le1$;
+its derivative is nonpositive. The scalar projection identity gives
+$\Phi(0)=(1-\epsilon)z/(1+z)$.
+Since $G\ge\epsilon^2I$,
+$\epsilon^2I+(1-\epsilon^2)G\le2G$, so, for $\epsilon\le1/2$,
+the first bound follows by inverse order and
+$(1-\epsilon^2)^2\ge1/2$.
+For each nonconstant character,
+$b_k=-\int\overline{\chi_k}(1-w)$. The finite orthonormal projection
+inequality gives $\|b\|^2\le\int(1-w)^2\le\epsilon$.
+The inverse at $\beta=\sqrt\epsilon$ is at most
+$\epsilon^{-1/2}I$, proving the second bound.
+Finally
+$R\beta I+(1-R\beta)G\le R[\beta I+(1-\beta)G]$ and
+$(1-R\beta)^2\ge(1-\beta)^2/4$ prove the ratio estimate.
+\end{proof}
+
+\begin{lemma}[A geometric-grid scale]\label{lem:scale}
+Let $0<\epsilon<1$, $R\ge2$, and
+$\log(1/\epsilon)\ge8\log(4R)$.
+Suppose $\Phi:[0,1]\to[0,\infty)$ decreases and satisfies
+$\Phi(\epsilon^2)>\epsilon^{1/4}$,
+$\Phi(\sqrt\epsilon)\le\sqrt\epsilon$, and
+$\Phi(R\beta)\ge\Phi(\beta)/(4R)$ when $R\beta\le1/2$.
+Then some $m\in[\epsilon^2R,R\sqrt\epsilon]$ satisfies
+\[
+ \sqrt\epsilon<\Phi(m/R)\le\epsilon^{1/4},\qquad
+ \Phi(m)\le R^{-1/16}\Phi(m/R).
+\]
+\end{lemma}
+\begin{proof}
+Take $x_k=\epsilon^2R^k$ until the first $K$ with
+$x_K\ge\sqrt\epsilon$. Then
+$x_K\le R\sqrt\epsilon\le1/2$ and
+$K\le3\log(1/\epsilon)/(2\log R)+1$.
+All values $\Phi(x_k)$ are positive, by the ratio bound and induction.
+Let $a,b$ be the first crossings of $\epsilon^{1/4},\epsilon^{1/2}$.
+They exist; $a\ge1$ and
+$\Phi(x_a)>\epsilon^{1/4}/(4R)\ge\epsilon^{1/2}$, so $a<b$.
+If every step $a<k\le b$ had
+$\Phi(x_k)>R^{-1/16}\Phi(x_{k-1})$, then
+\[
+ \tfrac14\log(1/\epsilon)-\log(4R)
+ <\log\frac{\Phi(x_a)}{\Phi(x_b)}
+ <\tfrac3{32}\log(1/\epsilon)+\tfrac1{16}\log R.
+\]
+This is impossible: subtracting the rightmost bound from the leftmost,
+and using the logarithmic hypothesis, gives at least
+$\frac14\log(4R)-\frac1{16}\log R>0$.
+Choose a step where the inequality fails. Its $m=x_k$ has the desired
+bounds, since $a\le k-1<b$.
+\end{proof}
+
+\subsection{Seed data and a uniform parameter sequence}
+For the rest of this section fix a probability $\rho$ on $X_I$, an
+ordered independent character family $(\phi_j)_{j=1}^d$ with bound
+$K_V\ge1$, its span $V$, and a unit vector $e=\sum_jc_j\phi_j$.
+Choose
+\[
+ \kappa=\bigl(4\max(1,\sum_j|c_j|)\bigr)^{-1},\qquad
+ \theta=\kappa^2,\qquad a=1-\theta.
+\]
+These quantities remain fixed while the scalar data change.
+In particular $0<\theta\le1/16$ and $|\kappa e(s)|\le1/4$ at every
+base point, not just almost everywhere.
+
+\begin{definition}[The seed]\label{def:seed}
+For an integer $L\ge1$ and $0<m\le2^{-L}$, introduce phase coordinates
+$y_1,\ldots,y_L$ and put
+\[
+ \zeta_\ell(y)=e^{2\pi iy_\ell},\qquad
+ w_e(s,y)=m\prod_{\ell=1}^L
+ [1+2\kappa\operatorname{Re}(e(s)\overline{\zeta_\ell(y)})].
+\]
+The reference measure for rows is $\rho\,dy$.
+Let $B_e$ be the compression of multiplication by $w_e$ to
+$\mathcal R=V\oplus\spn(\zeta_1,\ldots,\zeta_L)$ in that reference
+Hilbert space.
+\end{definition}
+
+\begin{lemma}[Seed moments and spectral data]\label{lem:seed-spectrum}
+The seed is a character polynomial, $0<w_e\le1$, and its phase
+integral is the constant $m$. In particular $0<B_e\le I$.
+Under the normalized seed fibers,
+\[
+ \E[\zeta_\ell\mid s]=\kappa e(s),\qquad
+ \E[\overline{\zeta_\ell}\zeta_k\mid s]=\theta|e(s)|^2
+ \quad(\ell\ne k).
+\]
+The operator $B_e$ is $mI$ on $V\cap e^\perp$, $maI$ on the
+span of the differences of the $\zeta_\ell$, and has matrix
+\[
+ mH_L=m\begin{pmatrix}1&\sqrt{L\theta}\\
+ \sqrt{L\theta}&a+L\theta\end{pmatrix}
+\]
+on the reference orthonormal pair $e,L^{-1/2}\sum_\ell\zeta_\ell$.
+Its eigenvalues there are $m\gamma,m\Gamma$, with
+\[
+ 0<\gamma<1<\Gamma,\quad \gamma\Gamma=a,\quad
+ 1+\frac{\theta L}{a}\le R:=\gamma^{-1}
+ \le\frac{2+\theta L}{a}.
+\]
+The squared norm of the projection of $e$ onto the $\gamma$ eigenspace
+of $H_L$ is
+$p_\gamma=(\Gamma-1)/(\Gamma-\gamma)$ and tends to one as $L\to\infty$.
+\end{lemma}
+\begin{proof}
+Each factor lies in $[1/2,3/2]$ and has phase integral one.
+Thus $m2^{-L}\le w_e\le m(3/2)^L\le1$; finite polynomiality follows
+from Lemma~\ref{lem:character-algebra}. Integrating one character
+against its own factor gives $\kappa e(s)$; different factors are
+independent in the phase variables, giving the mixed moments.
+The $\zeta_\ell$ are orthonormal and orthogonal to $V$ in the reference
+measure. The moments just computed, together with $\|e\|_\rho=1$,
+give the stated orthogonal decomposition and matrix.
+The determinant and trace of $H_L$ are $a$ and $1+a+L\theta$.
+Also $\det(H_L-I)=-L\theta<0$, so its two positive eigenvalues
+straddle one. By its diagonal Rayleigh quotient and its trace,
+$a+L\theta\le\Gamma\le2+L\theta$; use $R=\Gamma/a$.
+The spectral projection is
+$(\Gamma I-H_L)/(\Gamma-\gamma)$, proving the formula for $p_\gamma$.
+For $L>1$,
+$0\le1-p_\gamma\le1/(\Gamma-1)\le1/(\theta(L-1))$.
+This proves the asserted limit.
+\end{proof}
+
+\begin{lemma}[Compatible scalar losses and seed scales]\label{lem:seed-scales}
+Fix $K_s>1$, choose $0<\delta\le1$ with $1+\delta<K_s$, and fix
+$0<z<c_\delta$. There are scalar data with losses $\epsilon_n\to0$,
+response functions $\Phi_n$, and seed parameters $L_n,m_n$ such that,
+after omitting finitely many indices,
+\[
+ L_n=\left\lfloor\frac{\log(1/\epsilon_n)}{4\log2}\right\rfloor\ge1,
+ \quad 0<m_n\le2^{-L_n},\quad p_{\gamma_n}\ge3/4,
+\]
+\[
+ \sqrt{\epsilon_n}<\Phi_{*,n}:=\Phi_n(m_n\gamma_n)
+ \le\epsilon_n^{1/4},\quad
+ \frac{\Phi_n(m_n)}{\Phi_{*,n}}\le R_n^{-1/16}\to0.
+\]
+Each scalar augmented family has bound less than $K_s$.
+\end{lemma}
+\begin{proof}
+Choose the $n$th scalar datum with exact gain $z$ and loss less than
+$2^{-n-1}$ using Proposition~\ref{prop:scalar-supply}.
+Put $t_n=\log(1/\epsilon_n)\to\infty$. Lemma~\ref{lem:seed-spectrum}
+gives $R_n\to\infty$ and $R_n\le C(1+t_n)$ for a fixed $C$.
+The elementary estimates
+$\log y\le2\sqrt y$ for $y\ge1$ and
+$e^{t/8}\ge t^2/128$ show
+\[
+ \frac{\log(4C(1+t))}{t}\to0,\qquad
+ C(1+t)e^{-t/4}\to0.
+\]
+The logarithm estimate follows by integrating
+$1/s\le1/\sqrt s$ on $[1,y]$; the exponential estimate is its
+nonnegative quadratic power-series term for $t\ge0$.
+For the first limit, divide the logarithm estimate by $t$; for the second,
+bound $t e^{-t/4}$ by $128t^{-1}e^{-t/8}$ for $t>0$.
+Thus eventually $R_n\ge2$,
+$t_n\ge8\log(4R_n)$, and
+$R_n\sqrt{\epsilon_n}<\epsilon_n^{1/4}\le2^{-L_n}$.
+Also $p_{\gamma_n}\ge3/4$ eventually.
+The fixed positive lower bound in Lemma~\ref{lem:response} eventually
+exceeds $\epsilon_n^{1/4}$. Apply Lemma~\ref{lem:scale} to each
+individual $\Phi_n,R_n,\epsilon_n$ to choose $m_n$.
+This uses uniform inequalities; it asserts no continuity of a scalar
+packet, its dimension, or its matrix as a function of the loss.
+\end{proof}
+
+\subsection{One selected family}
+\begin{definition}[The selected family]\label{def:selected}
+Use one of the scalar systems above, with scalar variables disjoint
+from the phase and base variables. Put
+\[
+ W=w+(1-w)w_e,\qquad M=1-(1-m)\epsilon.
+\]
+For each nonconstant scalar character $\chi_k$, list the rows
+\[
+ \phi_1\chi_k,\ldots,\phi_d\chi_k,
+ \zeta_1\chi_k,\ldots,\zeta_L\chi_k,
+\]
+in that order, and order the columns by $k$. This is the new family.
+\end{definition}
+
+\begin{lemma}[Selected means and independence]\label{lem:selected-means}
+$W$ is a positive character polynomial at most one, with auxiliary
+integral $M$ independent of the base point. Its conditional means are
+\[
+ \mathcal E(\phi_j\chi_k)=\frac{(1-m)b_k}{M}\phi_j,\qquad
+ \mathcal E(\zeta_\ell\chi_k)=-\frac{m\kappa b_k}{M}e.
+\]
+Its centered Gram matrix is positive definite.
+\end{lemma}
+\begin{proof}
+$W=1-(1-w)(1-w_e)$ lies between $w>0$ and one; its integral follows
+by first integrating the phase variables, then the scalar variables.
+The scalar coefficients $b_k$ are real by evenness.
+Use $\int\chi_k=0$, $\int\chi_kw=b_k$, and the seed means to get both
+formulas.
+If a centered linear combination vanishes, positivity of $W$ makes
+the same equality valid almost everywhere for the reference product
+measure. It says that a sum of nonconstant scalar characters with
+row coefficients equals a base function. Haar integration in the
+scalar variables makes that base function zero. Each scalar Fourier
+coefficient therefore vanishes. Averaging in the phase variables
+gives a zero linear combination of the independent $\phi_j$, so its
+coefficients vanish. The remaining phase Fourier coefficients then
+make every $\zeta_\ell$ coefficient zero.
+\end{proof}
+
+\begin{lemma}[The two eigenvalues of the information operator]
+\label{lem:selected-information}
+For the selected family, its information operator on the base is
+\[
+ J=\lambda_\perp P_{V\cap e^\perp}+\lambda P_{\C e},\qquad
+ \lambda_\perp=\frac{\Phi(m)}{M-\Phi(m)},\quad
+ \lambda=\frac{\Phi_e}{M-\Phi_e},
+\]
+where
+$\Phi_e=p_\gamma\Phi(m\gamma)+(1-p_\gamma)\Phi(m\Gamma)$.
+The denominators are positive. Under the choices of
+Lemma~\ref{lem:seed-scales}, $3\Phi_*/4\le\Phi_e\le\Phi_*$.
+\end{lemma}
+\begin{proof}
+In the reference row space diagonalize $B_e$, with orthonormal
+eigenvectors $u_i$ and eigenvalues $0<\beta_i\le1$.
+From $W=w_e+(1-w_e)w$, the unnormalized Gram matrix of
+$(u_i\chi_k)_k$ is $\beta_iI+(1-\beta_i)G$.
+Different $i$ are orthogonal; for a base vector $v\in V$, its pairing
+column is $(1-\beta_i)b\,\ip{u_i}{v}$.
+Lemma~\ref{lem:gram-projection} therefore gives the unnormalized
+projection form
+$\sum_i\Phi(\beta_i)|\ip{u_i}{v}|^2$.
+On $V$ this is $\Phi(m)$ on $V\cap e^\perp$ and $\Phi_e$ on $\C e$,
+by Lemma~\ref{lem:seed-spectrum}.
+Normalization divides the form by $M$. The means lie in $V$, so
+$J$ vanishes on $V^\perp$. Lemma~\ref{lem:information} identifies
+the form with $\Psi(J)$, whose eigenvalues are strictly below one
+because $J$ is finite and positive. Solving $q=\lambda/(1+\lambda)$
+gives the two formulas and positive denominators.
+Monotonicity of $\Phi$, $m\Gamma\ge m\gamma$, and
+$p_\gamma\ge3/4$ give the last bounds.
+\end{proof}
+
+\begin{lemma}[Completed and partial columns]\label{lem:column-bounds}
+Adjoin the constant scalar column with all rows to the selected
+family, and let $H$ be its unnormalized augmented Gram matrix.
+Its reference row Gram matrix is $\Omega=\diag(G_\phi,I_L)$.
+Prefixes consisting of whole columns have norm at most $K_s$.
+For a nonconstant column injection $I_k$,
+\[
+ I_k^*HI_k\le\Omega,\qquad
+ I_k^*H^{-1}I_k\le(1+2\epsilon)\Omega^{-1}.
+\]
+Every prefix ending inside a nonconstant column has squared norm
+at most
+\[
+ Q(\epsilon)=1+
+ \left(\sqrt{K_s^2-1}+
+ \sqrt{(1+2\epsilon)K_V^2-1}\right)^2.
+\]
+\end{lemma}
+\begin{proof}
+The augmented family is independent: it is independent in the
+reference product measure by scalar Haar orthogonality and row
+independence, and $W$ is bounded below by a positive constant.
+In orthonormal row eigencoordinates of $B_e$ its scalar blocks are
+$\beta I+(1-\beta)B$. Their coordinate-prefix inequalities follow
+by taking convex combinations of those for $I$ and $B$.
+This bounds completed columns.
+The same coordinates give an upper bound one on a column synthesis
+Gram block, because $W\le1$. Inverse convexity from
+Lemma~\ref{lem:inverse-variational} gives
+\[
+ [\beta I+(1-\beta)B]^{-1}
+ \le\beta I+(1-\beta)B^{-1}.
+\]
+Its nonconstant diagonal entries are at most $1+2\epsilon$.
+To return to the original row coefficients, let $R$ be the
+invertible row-synthesis matrix in reference orthonormal coordinates,
+so $R^*R=\Omega$. The full Gram transforms as
+$H=E^*\widetilde HE$, where $E$ is diagonal with copies of $R$.
+Its inverse transforms as
+$H^{-1}=E^{-1}\widetilde H^{-1}E^{-*}$.
+These formulas give precisely the two displayed column bounds.
+
+The first inequality bounds column synthesis, from the $\Omega$
+coefficient norm, by one. The second bounds coefficient extraction
+into that norm by $\sqrt{1+2\epsilon}$: for any total coefficient
+vector $x$ and row test vector $z$, Cauchy--Schwarz in the $H$ metric
+gives
+$|z^*x_k|^2\le(z^*I_k^*H^{-1}I_kz)(x^*Hx)$;
+take the dual supremum in the $\Omega$ metric.
+The initial row cut has norm at most $K_V$, since the phase rows are
+orthonormal and orthogonal to $V$ in the reference metric.
+Thus a prefix is $P+Q$, where $PQ=QP=0$,
+$\|P\|\le K_s$, and $\|Q\|\le\sqrt{1+2\epsilon}K_V$.
+It is an idempotent. Lemma~\ref{lem:oblique} and the triangle
+inequality for $(P-P^*)+(Q-Q^*)$ prove the bound.
+If $P$ or $Q$ is zero, the bound follows from the other one's norm;
+if both are zero it is immediate.
+\end{proof}
+
+\begin{lemma}[Centering the selected family]\label{lem:selected-prefix}
+The centered new family has prefix bound $\sqrt{Q(\epsilon)}$.
+\end{lemma}
+\begin{proof}
+Remove the phase rows from the constant scalar column of the augmented
+family. Restriction preserves every prefix bound ending in a
+nonconstant column. The remaining initial column spans $V$.
+By Lemma~\ref{lem:selected-means}, each new vector has its mean in
+$V$, and its centered part is orthogonal to all base functions.
+Consequently projection off $V$ is exactly centering.
+Apply Lemma~\ref{lem:prefix-operations}(3), which requires bounds
+only for prefixes ending after that initial column.
+\end{proof}
+
+\begin{lemma}[Vanishing leakage and amplification]\label{lem:amplification}
+Along the sequence of Lemma~\ref{lem:seed-scales},
+\[
+ \lambda_n\to0,\qquad
+ \lambda_{\perp,n}/\lambda_n\to0,\qquad
+ (1-M_n)/\lambda_n\to0,\qquad \lambda_n>0.
+\]
+For any $\sigma>0$, with $N_n=\lceil\sigma/\lambda_n\rceil$,
+the product of $N_n$ independent selected copies has mass tending
+to one and information operator tending in norm to $\sigma P_{\C e}$.
+Its centered squared bound remains $Q(\epsilon_n)$.
+\end{lemma}
+\begin{proof}
+Eventually $M_n\ge3/4$ and $\Phi_{*,n}\le1/4$. Thus
+\[
+ \tfrac34\Phi_{*,n}\le\lambda_n\le2\Phi_{*,n},\quad
+ \frac{\lambda_{\perp,n}}{\lambda_n}\le
+ \tfrac83 R_n^{-1/16},\quad
+ \frac{1-M_n}{\lambda_n}\le\tfrac43\sqrt{\epsilon_n}.
+\]
+The preceding lemmas give all these inequalities, including positivity.
+Now $\sigma\le N_n\lambda_n<\sigma+\lambda_n$, whence
+$N_n\lambda_{\perp,n}\to0$ and $N_n(1-M_n)\to0$.
+Lemma~\ref{lem:independent-blocks} adds the information operators and
+preserves centered bounds. The product mass satisfies
+$1-M_n^{N_n}\le N_n(1-M_n)$.
+\end{proof}
+
+\begin{proposition}[Directional supply]\label{prop:directional}
+For the fixed $V,e$, any $K_s>1$, $\sigma>0$ and $\eta>0$, there
+are a positive character-polynomial weight $W\le1$ with constant
+new-variable integral $M>1-\eta$, and an ordered character family.
+Its means, centered Gram matrix, and information operator are computed
+in $L^2(M^{-1}W\,d\rho\,dy)$. The means lie in $V$, the centered
+Gram matrix is positive definite, and
+\[
+ \|J-\sigma P_{\C e}\|<\eta,\qquad
+ \PB_{\sqrt{1+(\sqrt{K_s^2-1}+\sqrt{K_V^2-1})^2+\eta}}
+       (\hbox{centered family}).
+\]
+Every character has a nonzero frequency in the new variables.
+Its real frequency is one of those of the $\phi_j$, or zero.
+If the $\phi_j$ have pairwise distinct old auxiliary modes, the
+output has pairwise distinct full auxiliary modes.
+\end{proposition}
+\begin{proof}
+Use the sequence of Lemma~\ref{lem:seed-scales} and the amplification
+of Lemma~\ref{lem:amplification}.
+Since
+\[
+ Q(\epsilon_n)\longrightarrow
+ 1+(\sqrt{K_s^2-1}+\sqrt{K_V^2-1})^2,
+\]
+one sufficiently large index gives all three required tolerances
+simultaneously.
+The finite product weight remains positive, at most one, and polynomial.
+The means remain in $V$ by integration of the unused factors.
+Within one copy every column has a nonconstant scalar mode.
+Helper rows retain their old modes; phase rows have their separate
+phase-coordinate unit modes. Therefore distinct old auxiliary modes
+distinguish helper rows, and phase modes distinguish the other rows.
+Different copies have disjoint scalar blocks containing nonzero modes,
+so they cannot collide. The real-frequency assertion follows from the
+explicit products in Definition~\ref{def:selected}.
+\end{proof}
+
+\section{Real exponentials and the basis interface}
+\subsection{Totality and independence}
+\begin{lemma}[Continuity of a density's Fourier transform]
+\label{lem:density-transform}
+If $\nu$ is a finite positive Borel measure on $\R$ and $h\in L^2(\nu)$,
+then $h\in L^1(\nu)$ and
+$F_h(t)=\int h(x)e_{-t}(x)\,d\nu(x)$ is continuous.
+If $F_h=0$, then $h=0$ in $L^2(\nu)$.
+\end{lemma}
+\begin{proof}
+Cauchy--Schwarz gives $\|h\|_1\le\sqrt{\nu(\R)}\|h\|_2$.
+Dominated convergence applies with majorant $|h|$.
+For $a=\operatorname{Re}h$ and $b=\operatorname{Im}h$,
+\[
+ F_a(t)=\tfrac12(F_h(t)+\overline{F_h(-t)}),\qquad
+ F_b(t)=\tfrac1{2i}(F_h(t)-\overline{F_h(-t)}).
+\]
+Thus both transforms vanish. The finite positive measures $a_+\nu$
+and $a_-\nu$ have equal characteristic functions, so Mathlib's
+finite-measure uniqueness theorem makes them equal. On $\{a>0\}$
+their equality gives $\int a_+\,d\nu=0$; the negative part is treated
+on $\{a<0\}$. Hence $a=0$ almost everywhere. The same argument for
+$b$ proves the claim. The change from $e_{-t}$ to the characteristic
+function convention is the bijective parameter change $t\mapsto-2\pi t$.
+\end{proof}
+
+\begin{lemma}[Rational totality]\label{lem:real-totality}
+For every finite positive Borel $\nu$ on $\R$,
+$\overline{\spn}\{e_q:q\in\Q\}=L^2(\nu)$.
+\end{lemma}
+\begin{proof}
+A vector orthogonal to all these characters has $F_h(q)=0$ for all
+rational $q$. Lemma~\ref{lem:density-transform} and density of $\Q$
+give $F_h=0$ and then $h=0$. Use the orthogonal-complement density
+criterion.
+\end{proof}
+
+\begin{lemma}[Pointwise character independence]\label{lem:pointwise-independence}
+For distinct real $t_1,\ldots,t_d$, the functions $e_{t_j}$ are
+linearly independent as functions on $\R$.
+\end{lemma}
+\begin{proof}
+Each is a monoid character of the additive real group with values in
+the multiplicative monoid of $\C$. If $s\ne t$, evaluation at
+$x=1/(2(s-t))$ gives $e_s(x)/e_t(x)=-1$, so the characters differ.
+Apply Mathlib's independence theorem for distinct monoid homomorphisms,
+using the multiplicative type synonym for the additive domain.
+This theorem imposes no finiteness assumption on the domain group.
+\end{proof}
+
+\begin{lemma}[Independence for a singleton-null measure]
+\label{lem:real-independence}
+If $\nu\ne0$ is finite and singleton-null, distinct real exponentials
+are linearly independent in $L^2(\nu)$.
+\end{lemma}
+\begin{proof}
+Suppose a nontrivial finite combination $p$ were zero almost everywhere.
+Its measurable zero set has positive measure. The Mathlib accumulation
+point theorem for singleton-null measures supplies an accumulation
+point of that set; its separability hypothesis holds because it is
+a subset of $\R$. The function $p:\R\to\C$ is real analytic: exponential
+is analytic, its argument here is real linear, and the sum is finite.
+The analytic identity principle on the connected real line makes
+$p$ identically zero. This contradicts
+Lemma~\ref{lem:pointwise-independence}.
+\end{proof}
+
+\subsection{Continuous coordinates and prefix construction}
+\begin{lemma}[The coefficient sequence space]\label{lem:coefficient-space}
+Let $(b_n)$ be independent in a Banach space $E$. The space
+\[
+ \mathcal A=\{a\in\C^\N:\sum_{n<N}a_nb_n
+                     \hbox{ converges in }E\},\qquad
+ \|a\|_{\mathcal A}=\sup_N\left\|\sum_{n<N}a_nb_n\right\|
+\]
+is a Banach space. The sum map $\mathcal A\to E$ has norm at most one.
+\end{lemma}
+\begin{proof}
+Convergence bounds the supremum; independence makes it a norm.
+For every $n$, $|a_n|\|b_n\|\le2\|a\|_{\mathcal A}$.
+If $a^{(j)}$ is Cauchy, each coordinate converges to a scalar $a_n$.
+For every $\epsilon>0$ and all sufficiently large $j$, passing to
+the coordinate limit in each finite sum gives
+$\sup_N\|\sum_{n<N}(a_n-a_n^{(j)})b_n\|\le\epsilon$.
+Tail differences of partial sums of $a$ are therefore at most
+$2\epsilon$ plus the tail difference of the convergent series for
+a fixed such $a^{(j)}$. Completeness of $E$ gives convergence of the
+series for $a$; the same supremum bound proves convergence in
+$\mathcal A$. The sum-map bound follows by taking limits of partial sums.
+\end{proof}
+
+\begin{lemma}[The expansion-only definition has continuous coordinates]
+\label{lem:coordinate-continuity}
+A Schauder basis in the definition of Section~1 has continuous linear
+coordinate functionals, and its partial-sum operators have one common
+bound.
+\end{lemma}
+\begin{proof}
+Uniqueness of the expansion of zero gives independence and nonzero
+basis vectors. The sum map in Lemma~\ref{lem:coefficient-space} is a
+continuous linear bijection onto $E$. Its inverse is continuous by
+the bounded inverse theorem. Thus
+$\sup_N\|\sum_{n<N}a_n(x)b_n\|\le K\|x\|$.
+The coordinate estimate in that lemma gives continuity of every $a_n$;
+linearity follows from uniqueness.
+\end{proof}
+
+\begin{remark}
+Lemma~\ref{lem:coordinate-continuity} preserves the mathematical
+definition in the original statement. For the supplied Lean target,
+these continuous coordinates are already fields of
+\ml{SchauderBasis}; its sequence-space bridge need not be implemented
+a second time.
+\end{remark}
+
+\begin{lemma}[Weak nullity of a bounded Hilbert basis]\label{lem:weak-null}
+If $(b_n)$ is a bounded Schauder basis of a Hilbert space, then
+$\ip{y}{b_n}\to0$ for every $y$.
+\end{lemma}
+\begin{proof}
+Represent the continuous coordinates by $a_n(x)=\ip{y_n}{x}$ using
+Hilbert duality. A vector orthogonal to all $y_n$ has all coordinates
+zero and is therefore zero. Thus their span is dense.
+If $y'$ is a finite combination of the first $N$ coordinate vectors,
+then $\ip{y'}{b_n}=0$ for $n\ge N$ by biorthogonality.
+For $M=\sup_n\|b_n\|$, the remaining pairing is bounded by
+$M\|y-y'\|$. Approximate $y$ arbitrarily closely.
+\end{proof}
+
+\begin{lemma}[The bounded ordered-prefix criterion]\label{lem:basis-criterion}
+Let $(b_n)$ be independent with dense span in a Hilbert space.
+Suppose every finite ordered initial family has prefix bound $K$,
+where $K\ge1$. Then $(b_n)$ is a Schauder basis.
+Its prefix operators $P_N$ satisfy
+\[
+ P_0=0,\quad \dim\ran P_N=N,\quad
+ P_NP_M=P_{\min(N,M)},\quad P_Nx\to x.
+\]
+The difference $P_{n+1}-P_n$ has range $\C b_n$.
+\end{lemma}
+\begin{proof}
+On the algebraic span define $P_N$ by truncating the unique finite
+coefficient representation. Its norm is at most $K$, independently of
+which larger initial family contains the representation.
+For $p_j\to x$ in that span, define $P_Nx=\lim_jP_Np_j$.
+The bound makes the images Cauchy and the limit independent of
+approximants. Linearity and the bound persist.
+The range is the span of the first $N$ vectors: containment follows
+from its finite-dimensional closedness, and equality follows because
+those vectors are fixed. Independence gives its dimension.
+The composition identities hold on the dense span and therefore
+everywhere. If $p$ is a finite sum and $N$ contains it,
+$\|P_Nx-x\|\le(K+1)\|x-p\|$, proving convergence.
+The same density argument gives the stated difference range; it
+contains $b_n$ because $(P_{n+1}-P_n)b_n=b_n$.
+
+Define $a_n(x)$ by $(P_{n+1}-P_n)x=a_n(x)b_n$.
+The nonzero vector $b_n$ makes this scalar unique and linear, and
+$|a_n(x)|\le2K\|x\|/\|b_n\|$ makes it continuous.
+Biorthogonality follows by applying the differences to $b_j$.
+Telescoping gives $\sum_{n<N}a_n(x)b_n=P_Nx\to x$.
+Applying each continuous $a_n$ to any other convergent expansion proves
+uniqueness. Equivalently, the displayed projection data and the
+specified vectors fulfill Mathlib's
+\ml{SchauderBasis.RankOneDecomposition} constructor.
+\end{proof}
+
+\begin{lemma}[Transport of a basis]\label{lem:basis-transport}
+A linear isometry equivalence sends a Schauder basis to a Schauder
+basis, preserving every prefix bound.
+\end{lemma}
+\begin{proof}
+Apply the equivalence to the convergent expansion of its inverse image.
+The inverse makes the resulting expansion unique. Isometry preserves
+the finite prefix inequalities; the transported coordinates are the
+old continuous coordinates composed with the inverse.
+\end{proof}
+
+\section{Residual copies and a finite product extension}
+Fix $0<u\le1/100$, and set
+$K_*=1+10u$ and $c=u/(1+2u)$.
+Let $\rho$ be a singleton-null probability on $\R$, let $A$ be a
+nonempty ordered list of distinct rational exponentials, and let $f$
+be a rational exponential not in that list. Put
+$E=\spn A$, $r=f-P_Ef$, and $e=r/\|r\|_\rho$.
+Lemma~\ref{lem:real-independence} gives $r\ne0$.
+
+\begin{lemma}[Lifting the residual with prescribed scalar gain]
+\label{lem:residual-lift}
+Write $\phi=(A,f)$, $r=\sum_ja_j\phi_j$, and let $S$ be the Gram
+matrix of $\phi$ under $\rho$. Fix $0<z<c_u$ with $z\|S\|<u$.
+For every $a_*>0$ there are a finite product torus, a polynomial
+weight $0<Q_*\le1$ depending only on its coordinates with
+$\int Q_*>1-a_*$, and an ordered family
+$(\phi_j\psi_{jk})_{j,k}$.
+In $L^2(d\rho\,Q_*\,dy/\int Q_*)$ this family has bound
+$\sqrt{(1+u)^3}$ and has a polynomial $h$ in its span such that
+\[
+ \E[h\mid x]=r,\qquad
+ \|h\|^2=\|r\|_\rho^2+z^{-1}\sum_j|a_j|^2.
+\]
+The family has pairwise distinct nonzero auxiliary modes.
+\end{lemma}
+\begin{proof}
+For each $j$ take independent scalar data from
+Proposition~\ref{prop:scalar-supply}, with parameters $u,z$, on
+disjoint torus coordinates. Choose their finitely many losses to
+sum to less than $a_*$. Their product $Q_*$ has loss at most this sum.
+Use the product of their normalized weights with $\rho$.
+The centered blocks of $\phi_j\psi_{jk}$ are orthogonal for distinct
+$j$; within a block their Gram is $C_j$, since $|\phi_j|=1$.
+The mean synthesis map therefore satisfies
+\[
+ TC^{-1}T^*=z\sum_j(\phi_j\otimes\phi_j),\qquad
+ C=\diag(C_j),
+\]
+where $(v\otimes v)x=\ip{v}{x}v$.
+The norm of $\sum_j\phi_j\otimes\phi_j$ equals $\|S\|$ by
+Lemma~\ref{lem:operator-norm} applied to synthesis onto its finite
+range. Lemma~\ref{lem:information} bounds the uncentered Gram between
+$C$ and $(1+u)C$. The centered families have bounds less than
+$1+u$, so Lemma~\ref{lem:prefix-operations} gives the asserted bound.
+
+Choose in each scalar family the mean-one polynomial $g_j$ with
+variance $1/z$ from Lemma~\ref{lem:scalar-identities}.
+Set $h=\sum_j a_j\phi_jg_j$.
+Its mean is $r$. Its centered summands from different $j$ are
+orthogonal and have squared norms $|a_j|^2/z$, proving the formula.
+The scalar modes are nonzero and distinct within each block; disjoint
+blocks distinguish different $j$. The number of blocks is fixed,
+so their losses can sum to any prescribed positive bound.
+\end{proof}
+
+\begin{lemma}[Equicorrelated unit vectors]\label{lem:equicorrelated}
+Suppose $h_i=\alpha e+\xi_i$ for $1\le i\le N$, where
+$\|e\|=\|h_i\|=1$, $0<\alpha<1$, and the $\xi_i$ are mutually
+orthogonal and orthogonal to $e$. Let $N=\lceil\alpha^{-2}\rceil$.
+If each $h_i\perp E$, then
+$J_0=u\sum_iP_{\C h_i}$ satisfies
+\[
+ J_0E=0,\quad \|J_0\|=u[1+(N-1)\alpha^2]<2u,\quad
+ \ip{e}{\Psi(J_0)e}\ge c.
+\]
+\end{lemma}
+\begin{proof}
+The Gram matrix of the $h_i$ is
+$(1-\alpha^2)I+\alpha^2\mathbf1\mathbf1^*$.
+Its largest eigenvalue is $1+(N-1)\alpha^2$; synthesis and
+Lemma~\ref{lem:operator-norm} give the norm formula.
+The ceiling inequalities give $(N-1)\alpha^2<1$ and $N\alpha^2\ge1$.
+Also $\ip{e}{J_0e}=uN\alpha^2\ge u$.
+On the finite range, diagonalization gives
+$\Psi(J_0)\ge J_0/(1+\|J_0\|)$, proving the lower bound by
+$c=u/(1+2u)$. On its orthogonal complement both operators vanish.
+The annihilation of $E$ follows from the stated orthogonality.
+\end{proof}
+
+\begin{lemma}[Residual copies with controlled total loss]
+\label{lem:residual-copies}
+For every $a>0$ there are an integer $N\ge1$ and a polynomial torus
+weight $0<Q\le1$ with
+$\int Q>1-a$, and finite ordered character families $V_i$ with unit
+vectors $h_i\in\spn V_i$, in
+$L^2(d\rho\,Q\,dy/\int Q)$, such that
+\[
+ \PB_{\sqrt{(1+u)^3}}(V_i),\qquad
+ J_0=u\sum_{i=1}^NP_{\C h_i},\qquad
+ J_0E=0,\quad\|J_0\|<2u,\quad\ip{e}{\Psi(J_0)e}\ge c.
+\]
+Each $V_i$ has pairwise distinct nonzero auxiliary modes and rational
+real frequencies.
+\end{lemma}
+\begin{proof}
+Set $\phi=(A,f)$, write $r=\sum_j a_j\phi_j$, and let $S$ be the
+Gram matrix of $\phi$ in $L^2(\rho)$. Choose, for example,
+$z=\frac12\min(c_u,u/(1+\|S\|))$ as in
+Lemma~\ref{lem:residual-lift} and define, before
+choosing any scalar mass losses,
+\[
+ \alpha=\frac{\|r\|_\rho}
+ {\sqrt{\|r\|_\rho^2+z^{-1}\sum_j|a_j|^2}},\qquad
+ N=\lceil\alpha^{-2}\rceil.
+\]
+These are fixed by $r,z$ and satisfy $0<\alpha<1$.
+Take $N$ independent lifts, each using its own scalar coordinates;
+choose all their scalar losses to sum to less than $a$.
+The product weight $Q$ has mass greater than $1-a$, since
+$1-\prod m_j\le\sum(1-m_j)$ for numbers in $[0,1]$.
+Normalize each lifted $h$ to unit norm. Its mean is $\alpha e$,
+and the centered components are mutually orthogonal.
+Its pairing with $E$ vanishes because its mean is proportional to
+$r\perp E$. Lemma~\ref{lem:equicorrelated} applies.
+The prefix and frequency properties are those of
+Lemma~\ref{lem:residual-lift}, unchanged by integrating unused factors.
+\end{proof}
+
+\begin{lemma}[A common tolerance for the product step]
+\label{lem:product-tolerance}
+Let $K\ge1$ be a prefix bound for $A$, and fix $\delta,\tau>0$.
+Choose the residual copies of Lemma~\ref{lem:residual-copies} with
+mass loss less than $\delta/2$. One can then choose $\eta>0$ so that
+directional constructions of tolerance $\eta$ and strength $u$ on
+each $(V_i,h_i)$ give, on concatenation,
+\[
+ \|J-J_0\|<N\eta,\quad \|J\|<3u,\quad
+ \PB_{\sqrt{1+14u}}(\hbox{centered new family}),
+\]
+auxiliary mass loss less than $\delta$, and an angle
+$\beta=\|P_F|_E\|<1$ satisfying
+\[
+ \sqrt{\frac{1+\beta}{1-\beta}}\max(K,K_*)<\max(K,K_*)+\tau,
+ \qquad \|P_Fe\|^2>c/2.
+\]
+Here all base vectors are embedded by the isometry of
+Lemma~\ref{lem:centering}.
+\end{lemma}
+\begin{proof}
+First take $Q$ with loss less than $\delta/2$ in
+Lemma~\ref{lem:residual-copies}. The base measure is now fixed.
+Use Proposition~\ref{prop:directional} with $K_s=1+u$ and
+$K_V=\sqrt{(1+u)^3}$ in pairwise disjoint new coordinate blocks.
+Since $(1+u)^2-1\le3u$ and $(1+u)^3-1\le4u$,
+each centered squared bound is at most
+$1+(\sqrt3+2)^2u+\eta$.
+Their centered spans are orthogonal by
+Lemma~\ref{lem:independent-blocks}, and their information operators
+add, so the same bound holds for the concatenation and
+$\|J-J_0\|<N\eta$.
+
+Put $k_0=\max(K,K_*)$,
+$R=(1+\tau/k_0)^2$, and $b_0=(R-1)/(R+1)\in(0,1)$.
+Choose
+\[
+ N\eta<\min(u,c/2,\delta/2,b_0^2),\qquad
+ \eta<[14-(\sqrt3+2)^2]u.
+\]
+All right sides are positive, since $4\sqrt3<7$.
+The norm and centered bounds follow. Total mass loss is at most the
+loss of $Q$ plus the sum of the new losses, hence is less than $\delta$.
+By Lemma~\ref{lem:information} and $J_0E=0$,
+$\beta^2=\|P_E\Psi(J)|_E\|\le N\eta$.
+Thus $\beta<b_0$ gives the displayed angle inequality.
+The same resolvent estimate gives
+$\|P_Fe\|^2=\ip{e}{\Psi(J)e}\ge c-N\eta>c/2$.
+\end{proof}
+
+\begin{proposition}[A finite product extension]\label{prop:product-extension}
+If $\PB_K(A)$ holds under $\rho$, then for every $\delta,\tau>0$
+there are a character polynomial $0<W\le1$ on $\R\times\T^D$
+and an ordered list
+$B=(e_{b_i}(x)\chi_{k_i}(y))_i$, with rational $b_i$ and pairwise
+distinct nonzero $k_i\in\Z^D$, such that
+\[
+ \int W(x,y)\,dy=m>1-\delta,\quad
+ d\sigma=m^{-1}W\,d\rho\,dy,
+\]
+\[
+ \begin{gathered}
+ \PB_{K'}(A,B)\text{ in }L^2(\sigma)
+ \quad\hbox{for some }K'<\max(K,K_*)+\tau,\\
+ d_\sigma(f,(A,B))^2<(1-c/2)d_\rho(f,A)^2.
+ \end{gathered}
+\]
+\end{proposition}
+\begin{proof}
+Apply Lemma~\ref{lem:product-tolerance} and put $W=Q\prod_iW_i$.
+Its auxiliary integral is
+$m=(\int Q)\prod_iM_i$, independent of $x$.
+It is positive and polynomial, and is at most one.
+For the new full Gram matrix,
+Lemma~\ref{lem:information} gives $C\le G\le(1+3u)C$.
+Thus the new family has a squared prefix bound at most
+$(1+\|J\|)(1+14u)<(1+3u)(1+14u)<(1+10u)^2$;
+the last inequality follows by subtracting
+to obtain $3u+58u^2>0$.
+Use the bound $K_*$ and Lemma~\ref{lem:angle} with the angle in
+Lemma~\ref{lem:product-tolerance}.
+
+Every old inner product is preserved by the constant marginals.
+The candidate $P_Ef+P_Fr$ lies in $E+F$, and therefore
+\[
+ d_\sigma(f,(A,B))^2
+ \le\|r-P_Fr\|^2
+ =\|r\|_\rho^2(1-\|P_Fe\|^2)
+ <(1-c/2)\|r\|_\rho^2.
+\]
+Each residual family has distinct old auxiliary modes. The frequency
+assertions of Proposition~\ref{prop:directional} apply, and fresh
+nonzero scalar modes in different applications separate their output
+families. Real frequencies remain rational. The order is the specified
+concatenation order, not numerical sorting of frequencies.
+\end{proof}
+
+\section{Graph averaging and one extension on the line}
+\begin{lemma}[Avoiding finitely many integer hyperplanes]\label{lem:integer-direction}
+For a finite $F\subset\Z^D\setminus\{0\}$ there is
+$\omega\in\Z^D$ with $k\cdot\omega\ne0$ for every $k\in F$.
+\end{lemma}
+\begin{proof}
+For $D=0$, $F$ is empty. Otherwise the polynomials
+$p_k(X)=\sum_{i=0}^{D-1}k_iX^i$ are nonzero. A nonzero polynomial has
+finitely many roots, by induction on degree and division by a linear
+factor at each root. Choose an integer $b$ outside the union of their
+finite root sets and put $\omega=(1,b,\ldots,b^{D-1})$.
+\end{proof}
+
+\begin{lemma}[A mean-square vanishing statement]\label{lem:mean-square}
+Let $\mu$ be finite and singleton-null on $\R$, $g\in L^1(\mu)$,
+and let $l\in\Z\setminus\{0\}$. Then
+\[
+ \frac1M\sum_{j=1}^M
+ \left|\int g(x)e_{jl}(x)\,d\mu(x)\right|^2\longrightarrow0.
+\]
+\end{lemma}
+\begin{proof}
+Set $D_M(t)=M^{-1}\sum_{j=1}^M e^{2\pi ijt}$.
+The geometric sum gives
+$|D_M(t)|\le2/(M|1-e^{2\pi it}|)$ for $t\notin\Z$,
+so $D_M(t)\to0$ there. Also $|D_M(t)|\le1$ everywhere.
+Expanding the squares and using Fubini
+writes the asserted average as
+\[
+ \iint g(x)\overline{g(y)}D_M(l(x-y))\,d\mu(x)\,d\mu(y).
+\]
+The majorant $|g(x)g(y)|$ is integrable, with integral $\|g\|_1^2$.
+For every $x$ the exceptional $y$ lie in the countable set
+$x+l^{-1}\Z$, which is null. This relation is measurable, being a
+countable union of closed lines. Fubini makes it product-null.
+Dominated convergence proves the limit.
+\end{proof}
+
+\begin{lemma}[One subsequence for finitely many sequences]\label{lem:common-subsequence}
+If finitely many complex sequences $a_j^{(r)}$ satisfy
+$M^{-1}\sum_{j=1}^M|a_j^{(r)}|^2\to0$, there are strictly increasing
+positive integers $j_n$ with $a_{j_n}^{(r)}\to0$ for every $r$.
+\end{lemma}
+\begin{proof}
+The nonnegative sequence $A_j=\sum_r|a_j^{(r)}|^2$ has Ces\`aro
+averages tending to zero. For every $N$ and $\epsilon>0$ some $j>N$
+has $A_j<\epsilon$; otherwise its average for $M>N$ is at least
+$\epsilon(M-N)/M$, a contradiction.
+Recursively choose $j_n>j_{n-1}$ with $A_{j_n}<1/(n+1)$.
+Each squared modulus is bounded by this sum. The empty family is
+handled by $j_n=n+1$.
+\end{proof}
+
+\begin{lemma}[Simultaneous graph averaging]\label{lem:graph}
+Let $\mu$ be finite and singleton-null, and let finitely many functions
+on $\R\times\T^D$ have the form
+$G(x,y)=\sum_k g_k(x)\chi_k(y)$ with finite supports and
+$g_k\in L^1(\mu)$. For any additional finite
+$L\subset\Z^D\setminus\{0\}$ there exist $\omega\in\Z^D$ and
+$j_n\uparrow\infty$ such that
+\[
+ k\cdot\omega\ne0\ (k\in L),\qquad
+ \int G(x,j_n\omega x)\,d\mu\longrightarrow
+ \iint G(x,y)\,dy\,d\mu
+\]
+for all of the functions simultaneously.
+\end{lemma}
+\begin{proof}
+Apply Lemma~\ref{lem:integer-direction} to $L$ together with every
+nonzero mode in every support. A term with mode $k\ne0$ restricts
+to $g_k(x)e_{j(k\cdot\omega)}(x)$.
+Lemmas~\ref{lem:mean-square} and \ref{lem:common-subsequence} make
+all these integrals tend to zero along one subsequence.
+Zero-mode integrals are unchanged and equal the torus integrals by
+Lemma~\ref{lem:character-algebra}. If $D=0$ only zero modes occur.
+\end{proof}
+
+\begin{lemma}[Eventual frequency separation]\label{lem:separate-frequencies}
+For a finite ordered list of rational $b_i$ and pairwise distinct
+nonzero integers $l_i$, the frequencies $b_i+jl_i$, in that same
+order, are distinct and avoid any given finite set of real old
+frequencies for all sufficiently large integers $j$.
+\end{lemma}
+\begin{proof}
+Each collision with an old frequency solves a nonconstant affine
+equation in $j$, and each collision between two new frequencies has
+nonzero slope $l_i-l_{i'}$. There is at most one real solution per
+equation. Finitely many equations have only finitely many exceptional
+integer solutions. All the new frequencies are rational.
+\end{proof}
+
+\begin{proposition}[One extension on the line]\label{prop:line-extension}
+Let $\mu$ be a singleton-null probability, let $0<v\le1$ be measurable,
+and put $\nu=v\mu$. Let $A$ be a nonempty ordered list of distinct
+rational exponentials with $\PB_K(A)$ under $\nu$, and let $f$ be a
+rational exponential not in that list. For $\delta,\tau>0$ there is
+a positive character polynomial $V\le1$ on $\R$ and an ordered
+extension $A'$ by distinct rational exponentials such that
+\[
+ \int(1-V)\,d\mu<\delta,\qquad
+ \PB_{\max(K,K_*)+\tau}(A')\text{ under }V\nu,
+\]
+\[
+ d_{V\nu}(f,A')^2\le(1-c/4)d_\nu(f,A)^2.
+\]
+\end{proposition}
+\begin{proof}
+Lemma~\ref{lem:weighted-measures} gives $0<\nu(\R)\le1$ and
+singleton-nullity. Normalize to $\rho=\nu/\nu(\R)$.
+Apply Proposition~\ref{prop:product-extension} with tolerances
+$\delta/2,\tau/2$, obtaining $W,B,m,\sigma$ and a strict prefix
+bound $K'<\max(K,K_*)+\tau/2$.
+Use Lemma~\ref{lem:graph} with
+\[
+ G\in\{1-W\}\cup
+ \{vW\overline p q:p,q\in(A,B,f)\},\quad
+ L=\{k_i\}_i\cup\{k_i-k_{i'}:i\ne i'\}.
+\]
+All coefficients are integrable: the character polynomials are
+bounded and $0<v\le1$ on a probability space.
+Set $V_n(x)=W(x,j_n\omega x)$ and replace each member
+$e_{b_i}\chi_{k_i}$ of $B$ by $e_{b_i+j_n k_i\cdot\omega}$.
+Call the appended ordered list $A'_n$.
+Lemma~\ref{lem:separate-frequencies} applies because of the chosen
+nonzero, distinct slopes. The functions $V_n$ are positive rational
+character polynomials and are at most one.
+
+The product family $(A,B,f)$ has positive definite Gram matrix.
+Indeed a weighted zero combination is also zero in the reference
+product measure because $W>0$. Haar integration separates its
+distinct nonzero auxiliary modes, forcing every $B$ coefficient to
+vanish since its real exponential has modulus one. The zero-mode
+combination of $(A,f)$ then vanishes, and
+Lemma~\ref{lem:real-independence} gives its independence.
+Let $s=m\nu(\R)>0$. The Gram matrices on the graph converge to
+$s$ times the corresponding $\sigma$ Gram matrices, entry by entry,
+and $\int(1-V_n)\,d\mu\to1-m<\delta/2$.
+Lemma~\ref{lem:gram-stability}, with sufficiently small relative error,
+gives the bound $\max(K,K_*)+\tau$ eventually, using the strict slack
+in $K'$ and invariance of prefix bounds under scaling.
+The distance formula gives
+\[
+ d_{V_n\nu}(f,A'_n)^2
+ \longrightarrow s\,d_\sigma(f,(A,B))^2
+ <(1-c/2)d_\nu(f,A)^2,
+\]
+because $m\le1$ and distances under $\rho$ scale by $\nu(\R)$.
+The old distance is positive by independence. Hence the weaker
+factor $1-c/4$ holds eventually. Take one index after all the finitely
+many mass, prefix, distance and frequency thresholds.
+\end{proof}
+
+\section{Ordered stages and the limiting weighted basis}
+\begin{lemma}[A recurrent rational schedule]\label{lem:schedule}
+There is a sequence $(q_n)$ of rationals such that each rational
+occurs infinitely often. For each rational $q$, its number of
+occurrences among $q_0,\ldots,q_{n-1}$ tends to infinity.
+\end{lemma}
+\begin{proof}
+Fix an enumeration $r_0,r_1,\ldots$ of $\Q$ and concatenate the finite
+rounds $(r_0)$, $(r_0,r_1)$, $(r_0,r_1,r_2)$, and so on.
+Round $m$ starts at $T_m=m(m+1)/2$ and ends before $T_{m+1}$.
+For each $k$, the positions $T_m+k$, $m\ge k$, contain $r_k$,
+are distinct and tend to infinity. Any prescribed finite number of
+these positions is eventually included in the counted initial segment.
+\end{proof}
+
+\begin{lemma}[Positive products and convergence of weights]
+\label{lem:positive-product}
+Let $\mu$ be a probability and $V_n$ measurable with $0<V_n\le1$
+pointwise and $\sum_n\int(1-V_n)\,d\mu<\infty$.
+Set $v_0=1$ and $v_n=\prod_{j<n}V_j$. Then $v_n\downarrow w$,
+where $w>0$ almost everywhere, and $v_n\to w$ in $L^1(\mu)$.
+One may modify $w$ on a null set to have $0<w\le1$ everywhere.
+\end{lemma}
+\begin{proof}
+Monotonicity gives a pointwise limit in $[0,1]$, which is measurable.
+Tonelli gives $\sum_n(1-V_n(x))<\infty$ almost everywhere.
+At such a point $V_n(x)\to1$ and eventually $V_n(x)\ge1/2$.
+Since $-\log t=\int_t^1s^{-1}\,ds\le2(1-t)$ on $[1/2,1]$,
+the sum of $-\log V_n(x)$ is finite; the finitely many initial
+terms are finite because every factor is positive.
+Exponentiating the convergent sum proves $w(x)>0$.
+Dominated convergence, with bound one for $|v_n-w|$, proves $L^1$
+convergence. Assign value one on the measurable null set $\{w=0\}$.
+All comparisons with $v_n$ then remain valid almost everywhere.
+\end{proof}
+
+\begin{definition}[Extension states]\label{def:states}
+A state consists of a measurable pointwise positive weight $v\le1$
+on $\R$, a nonempty finite ordered list of distinct rational
+frequencies $a=(a_0,\ldots,a_{d-1})$, and a specified prefix bound for
+the associated exponential list $A=(e_{a_i})$ under $v\mu$.
+A successor retains the frequency list as an initial
+segment and multiplies $v$ by a pointwise positive polynomial $V\le1$.
+The stage index and the list length are distinct pieces of data.
+\end{definition}
+
+\begin{lemma}[Existence of compatible states]\label{lem:states}
+Given $\varepsilon>0$, put
+\[
+ u=\min(1,\varepsilon)/100,\quad
+ \delta_n=2^{-n-1},\quad
+ \tau_n=(\varepsilon-10u)2^{-n-2},\quad
+ K_n=K_*+\sum_{j<n}\tau_j.
+\]
+For a singleton-null probability $\mu$, there are states $(v_n,A_n)$
+with $v_0=1$, $A_0=(e_0)$, and bound $K_n$.
+Writing $a_n$ for their frequency lists, $a_{n+1}$ extends $a_n$
+as an initial segment, and $v_{n+1}=v_nV_n$, where
+$\int(1-V_n)\,d\mu<\delta_n$.
+With $\vartheta=1-c/4\in(0,1)$, the scheduled target satisfies
+\[
+ d_{v_{n+1}\mu}(e_{q_n},A_{n+1})^2
+ \le\vartheta\,d_{v_n\mu}(e_{q_n},A_n)^2.
+\]
+\end{lemma}
+\begin{proof}
+$\varepsilon-10u>0$, so all tolerances are positive.
+The initial one-vector family has bound one, hence bound $K_0$.
+If $q_n$ is already in the frequency list, set $V_n=1$ and keep the
+state; its target distance is zero, and its old bound is at most
+$K_{n+1}$. Otherwise apply Proposition~\ref{prop:line-extension}.
+The hypothesis that the target is outside the old span follows from
+Lemma~\ref{lem:real-independence}, because $v_n\mu$ is nonzero and
+singleton-null. As $K_n\ge K_*$, the new bound is
+$K_n+\tau_n=K_{n+1}$. The new polynomial is pointwise positive and
+at most one, preserving the state conditions.
+Induction with a choice of a witness at each step constructs the states.
+No decision about arbitrary closed subspace membership is needed.
+\end{proof}
+
+\begin{lemma}[Density of the union in the limiting measure]
+\label{lem:limit-density}
+For the states in Lemma~\ref{lem:states}, let $w$ be the weight from
+Lemma~\ref{lem:positive-product}. Then the union of their spans is
+dense in $L^2(w\mu)$, and their lengths $d_n$ are unbounded.
+\end{lemma}
+\begin{proof}
+The multiplier losses are summable. For a fixed rational $q$, let
+$N_n(q)$ count visits to $q$ in the first $n$ stages.
+Lemma~\ref{lem:distance-monotone} gives nonincrease at every other
+stage and after passage from $v_n$ to $w$. The visited stage either
+has zero distance or supplies the contraction in Lemma~\ref{lem:states}.
+Induction therefore yields
+\[
+ d_{w\mu}(e_q,A_n)^2
+ \le d_{v_n\mu}(e_q,A_n)^2
+ \le\vartheta^{N_n(q)}d_\mu(e_q,A_0)^2\longrightarrow0.
+\]
+Use Lemma~\ref{lem:schedule} and $0<\vartheta<1$.
+Each rational exponential lies in the closure of the union, so
+Lemma~\ref{lem:real-totality} proves density.
+If the nondecreasing integer lengths were bounded, they would
+eventually be constant. Compatibility would then make all subsequent
+lists identical. Their finite-dimensional span is closed, so density
+would make it all of $L^2(w\mu)$.
+But $w\mu$ is nonzero and singleton-null, and
+Lemma~\ref{lem:real-independence} provides independent families of
+arbitrarily large size in that space, a contradiction.
+\end{proof}
+
+\begin{lemma}[Extracting the ordered limit list]\label{lem:ordered-limit}
+If finite lists $A_n$ extend one another and their lengths $d_n$
+are unbounded, there is a unique sequence whose first $d_n$ entries
+are $A_n$ for every $n$. If each list has distinct entries, this
+sequence is injective.
+\end{lemma}
+\begin{proof}
+For entry $k$, choose any $n$ with $d_n>k$ and use its $k$th entry.
+Two choices agree in any later list containing both, so the definition
+is independent of the choice and has the required prefixes.
+These prefixes exhaust all entries, proving uniqueness.
+For two distinct indices choose one list long enough to contain both;
+its injectivity distinguishes their entries.
+\end{proof}
+
+\begin{lemma}[Passing prefix inequalities to the limit]
+\label{lem:limit-prefix}
+For the limiting sequence $(e_{t_k})$ extracted from the states,
+every finite initial family in $L^2(w\mu)$ has prefix bound
+\[
+ K_\infty=K_*+\sum_{n=0}^\infty\tau_n
+ =1+10u+\frac{\varepsilon-10u}{2}<1+\varepsilon.
+\]
+\end{lemma}
+\begin{proof}
+Fix a finite coefficient vector and its cut, giving bounded
+character polynomials $p$ and $p_{\rm cut}$.
+For all sufficiently large stages both are represented in $A_n$
+with exactly those coefficients, padded by zeros.
+The state inequality gives
+$\|p_{\rm cut}\|_{v_n\mu}^2\le K_\infty^2\|p\|_{v_n\mu}^2$.
+By Lemmas~\ref{lem:positive-product} and \ref{lem:weighted-measures},
+both integrals converge to their values under $w\mu$. Taking limits
+proves the desired finite inequality.
+The geometric sum of the $\tau_n$ is
+$(\varepsilon-10u)/2$, and $10u<\varepsilon$ gives the strict bound.
+\end{proof}
+
+\begin{theorem}[Weighted exponential basis]\label{thm:weighted}
+For a singleton-null Borel probability $\mu$ on $\R$ and
+$\varepsilon>0$, there are a measurable weight $0<w\le1$ and an
+injective sequence of rational times $t_k$ for which $(e_{t_k})$
+is a Schauder basis of $L^2(w\mu)$ with a uniform prefix bound
+less than $1+\varepsilon$.
+\end{theorem}
+\begin{proof}
+Take the states of Lemma~\ref{lem:states}. The limiting weight and
+density are supplied by Lemmas~\ref{lem:positive-product} and
+\ref{lem:limit-density}; the latter also proves unbounded lengths.
+Apply Lemma~\ref{lem:ordered-limit} to the frequency lists to obtain
+the injective ordered sequence,
+and Lemma~\ref{lem:real-independence} gives independence of all its
+finite initial families under $w\mu$.
+Use Lemma~\ref{lem:limit-prefix} and then
+Lemma~\ref{lem:basis-criterion}. The optional null-set modification
+of $w$ has no effect on the space or any bound.
+\end{proof}
+
+\clearpage
+\section{A scalar measure for the given unitary group}
+\subsection{The orbit coefficient and its positive approximants}
+\begin{lemma}[Group identities and the orbit coefficient]\label{lem:group}
+The composition law and invertibility of the $U_t$ imply
+$U_0=I$ and $U_{-t}=U_t^{-1}$.
+For a unit vector $v$, let $\phi(t)=\ip{v}{U_tv}$.
+Then $\phi$ is continuous, $\phi(0)=1$, $|\phi|\le1$, and
+\[
+ \phi(-t)=\overline{\phi(t)},\qquad
+ \ip{U_sv}{U_tv}=\phi(t-s).
+\]
+\end{lemma}
+\begin{proof}
+Cancel $U_0$ in $U_0U_0=U_0$ and then use the composition law at
+$t+(-t)=0$. Strong continuity and continuity of the inner product
+give continuity of $\phi$. Unitarity and Cauchy--Schwarz give its
+bound. Moving the unitary $U_s$ from both arguments gives the last
+identity; conjugate symmetry gives the other one.
+\end{proof}
+
+\begin{lemma}[The triangular-window integral]\label{lem:triangle-integral}
+For $T>0$ and a function $g:\R\to\C$ continuous on $[-T,T]$,
+\[
+ \int_0^T\int_0^T g(t-s)\,dt\,ds
+ =\int_{-T}^T(T-|r|)g(r)\,dr.
+\]
+\end{lemma}
+\begin{proof}
+Translate the inner variable to $r=t-s$. The double integral becomes
+the integral of $g(r)$ over $0\le s\le T$, $-s\le r\le T-s$.
+Fubini is valid since this is a bounded integrand on a bounded set.
+For fixed $r\in[-T,T]$, the admissible $s$ form
+$[0,T]\cap[-r,T-r]$, of length $T-r$ if $r\ge0$ and $T+r$ if $r\le0$.
+Outside that interval there are no admissible $s$. This proves the formula.
+\end{proof}
+
+\begin{lemma}[Positivity from a vector integral]\label{lem:positive-density}
+For $T>0$, put $f_T(t)=(1-|t|/T)_+\phi(t)$ and
+$q_T(x)=\int_\R f_T(t)e^{-2\pi itx}\,dt$.
+Then $f_T$ is continuous and integrable, and
+\[
+ q_T(x)=\frac1T
+ \left\|\int_0^T e^{-2\pi ixs}U_sv\,ds\right\|^2\ge0.
+\]
+In particular $q_T$ is real-valued and measurable.
+\end{lemma}
+\begin{proof}
+$f_T$ is continuous, bounded by one, and supported in $[-T,T]$.
+The vector integrand on the right is continuous with norm one, so
+its Bochner integral on $[0,T]$ exists.
+Integrating the inner product in both variables gives its squared norm:
+integration against a fixed vector is a continuous linear functional
+in the second variable, and conjugate symmetry handles the first.
+The double integrand is
+$e^{-2\pi ix(t-s)}\ip{U_sv}{U_tv}$.
+Apply Lemmas~\ref{lem:group} and \ref{lem:triangle-integral} and divide
+by $T$ to obtain $q_T$. Measurability, indeed continuity, of $q_T$
+also follows directly by dominated convergence with majorant $|f_T|$.
+\end{proof}
+
+\begin{lemma}[Mass one before using inversion]\label{lem:density-mass}
+For every $T>0$, $q_T\in L^1(\R)$ and $\int q_T=1$.
+The probability $d\mu_T=q_T(x)\,dx$ satisfies
+$\int e_t\,d\mu_T=f_T(t)$ for every real $t$.
+\end{lemma}
+\begin{proof}
+For $a>0$, the Gaussian Fourier formula and Fubini give
+\[
+ \int_\R q_T(x)e^{-\pi a x^2}\,dx
+ =\int_\R f_T(t)a^{-1/2}e^{-\pi t^2/a}\,dt.
+\]
+For Fubini, the absolute double integral is bounded by
+$\|f_T\|_1\int e^{-\pi a x^2}\,dx<\infty$.
+After substituting $t=\sqrt a\,s$, the right side tends to
+$f_T(0)\int e^{-\pi s^2}\,ds=1$ by dominated convergence.
+On the left the integrands are nonnegative and increase to $q_T$
+along any sequence $a\downarrow0$. Monotone convergence gives
+$\int q_T=1$, and its reality and nonnegativity give $L^1$ integrability.
+Now both $f_T$ and its Fourier transform $q_T$ are integrable.
+Mathlib's Fourier inversion theorem, applied to continuous $f_T$,
+gives the stated character identity. No inversion was used to
+deduce integrability of $q_T$.
+\end{proof}
+
+\begin{lemma}[A limiting probability from character limits]
+\label{lem:character-limit}
+If probabilities $\mu_n$ on $\R$ satisfy
+$\int e_t\,d\mu_n\to\phi(t)$ for every $t$, and $\phi$ is continuous
+at zero, there is a Borel probability $\mu$ with
+$\int e_t\,d\mu=\phi(t)$ for every $t$.
+\end{lemma}
+\begin{proof}
+In Mathlib's convention their characteristic functions converge to
+$s\mapsto\phi(s/(2\pi))$, continuous at zero.
+The Mathlib tightness theorem for such characteristic-function
+limits applies. Prokhorov compactness gives a cluster point $\mu$
+of the sequence in the weak topology on probabilities.
+For every fixed $t$, integration of the bounded continuous function
+$e_t$ is continuous in that topology. Its value at $\mu$ is a cluster
+point of the numerical sequence of integrals, and must equal its
+limit $\phi(t)$. Indeed two distinct values in the Hausdorff space
+$\C$ have disjoint neighborhoods, incompatible with both convergence
+and clustering. No limiting probability is assumed in advance.
+\end{proof}
+
+\begin{proposition}[Orbit spectral measure]\label{prop:orbit-measure}
+For a unit vector $v$ in the given group there is a Borel probability
+$\mu$ on $\R$ such that
+$\ip{U_sv}{U_tv}=\int e_{t-s}\,d\mu$ for all $s,t$.
+\end{proposition}
+\begin{proof}
+Take the probabilities $\mu_{n+1}$ from Lemma~\ref{lem:density-mass}.
+For every fixed $t$, $f_{n+1}(t)\to\phi(t)$.
+Apply Lemma~\ref{lem:character-limit} and then Lemma~\ref{lem:group}.
+Using $n+1$ ensures every window parameter is positive.
+\end{proof}
+
+\subsection{The cyclic isometry and weighted transport}
+\begin{lemma}[Equal Gram data on dense spans]\label{lem:equal-gram}
+Suppose families $(f_i)_{i\in J}$ and $(g_i)_{i\in J}$ have dense
+spans in Hilbert spaces $\mathcal H_1,\mathcal H_2$, and
+$\ip{f_i}{f_j}=\ip{g_i}{g_j}$ for all $i,j$.
+There is a unique linear isometry equivalence sending every $f_i$
+to $g_i$. Independence of either family is not required.
+\end{lemma}
+\begin{proof}
+For every finitely supported coefficient vector the two synthesized
+squared norms are equal, by the double-sum Gram formula.
+Thus a zero combination on one side is zero on the other, and the
+map between algebraic spans is well defined and isometric.
+For $x_n$ in the first span with $x_n\to x$, define its image as the
+limit of the images of $x_n$. They are Cauchy; equality of norms
+makes the limit independent of approximants and preserves linearity
+and isometry. Its range is closed: a convergent sequence in the
+range lifts to a Cauchy sequence in the complete domain.
+The range contains the dense second span, hence is all of $\mathcal H_2$.
+Density also proves uniqueness.
+\end{proof}
+
+\begin{lemma}[Cyclic realization and intertwining]\label{lem:cyclic-realization}
+If $v$ is a cyclic unit vector and $\mu$ is as in
+Proposition~\ref{prop:orbit-measure}, there is a linear isometry
+equivalence $S:L^2(\mu)\to H$ satisfying
+$Se_t=U_tv$ and $S(e_tF)=U_tSF$ for every $F$ and $t$.
+\end{lemma}
+\begin{proof}
+The real exponentials have dense span by
+Lemma~\ref{lem:real-totality}, and cyclicity gives the other dense
+span. Their Gram matrices agree by Proposition~\ref{prop:orbit-measure},
+so Lemma~\ref{lem:equal-gram} applies.
+Multiplication by $e_t$ is an isometry of $L^2(\mu)$ with inverse
+multiplication by $e_{-t}$. On each $e_s$, the desired identity is
+$Se_{s+t}=U_tU_sv$. Linearity proves it on their span; boundedness
+of both sides extends it by density.
+\end{proof}
+
+\begin{lemma}[No point masses]\label{lem:no-point-masses}
+If the group has no common eigenvector, the measure in
+Lemma~\ref{lem:cyclic-realization} is singleton-null.
+\end{lemma}
+\begin{proof}
+If $\mu(\{x\})>0$, then $h=\mathbf1_{\{x\}}\in L^2(\mu)$ has positive
+squared norm $\mu(\{x\})$. For all $t$,
+$e_th=e_t(x)h$, so $Sh\ne0$ is a common eigenvector by intertwining.
+This contradicts the hypothesis. Every singleton therefore has measure zero.
+\end{proof}
+
+\begin{lemma}[The positive-weight isometry]\label{lem:weight-isometry}
+For a finite $\mu$ and a measurable $0<w\le1$ almost everywhere,
+multiplication by $\sqrt w$ is a complex-linear isometry equivalence
+$L^2(w\mu)\to L^2(\mu)$.
+\end{lemma}
+\begin{proof}
+Choose the representatives of Lemma~\ref{lem:weighted-measures}.
+The weighted norm identity gives
+$\int|\sqrt w\,F|^2\,d\mu=\int|F|^2w\,d\mu$.
+It proves square integrability, well-definedness on equivalence
+classes, and isometry; scalar multiplication and addition are
+preserved pointwise.
+For $G\in L^2(\mu)$ put $F=G/\sqrt w$ on $\{w>0\}$ and zero
+elsewhere. This is measurable and
+$\int|F|^2w\,d\mu=\int|G|^2\,d\mu<\infty$.
+Thus it is a valid inverse, with both identities holding almost
+everywhere. No essential bound on $1/\sqrt w$ is needed or asserted.
+\end{proof}
+
+\section{Proof of the target theorem}
+\begin{proof}[Proof of Theorem~\ref{thm:main}]
+Suppose first that $b_n=U_{t_n}g$ is a Schauder basis.
+Its span is contained in the orbit span, so $g$ is cyclic.
+All its norms equal $\|g\|$, so Lemma~\ref{lem:weak-null} applies.
+For a common eigenvector $a\ne0$, unitarity gives
+$U_ta=\lambda_ta$ with $|\lambda_t|=1$.
+Consequently $|\ip{a}{U_{t_n}g}|=|\ip{a}{g}|$, which must be zero
+by weak nullity. Then $a$ is orthogonal to the dense basis span,
+contradicting $a\ne0$.
+
+Conversely, a cyclic vector is nonzero because $H$ is nonzero;
+dividing it by its norm preserves its orbit span. Choose such a cyclic
+unit vector $v$. Proposition~\ref{prop:orbit-measure} and
+Lemma~\ref{lem:cyclic-realization} give $\mu$ and $S$.
+Lemma~\ref{lem:no-point-masses} makes $\mu$ singleton-null.
+Apply Theorem~\ref{thm:weighted}, for example with $\varepsilon=1$.
+Since $\int w\,d\mu\le1$, the function $\sqrt w$ belongs to $L^2(\mu)$.
+Compose its positive-weight isometry from
+Lemma~\ref{lem:weight-isometry} with $S$.
+It sends each basis vector $e_{t_k}$ to
+$S(\sqrt w\,e_{t_k})=U_{t_k}(S\sqrt w)$.
+Lemma~\ref{lem:basis-transport} gives a Schauder basis in this orbit.
+The times are rational and injective, hence distinct as real numbers.
+Shifting $k=0,1,\ldots$ to $n=1,2,\ldots$ gives exactly the statement.
+\end{proof}
+
+\appendix
+\section{Mathlib correspondence and the audit changes}\label{sec:mathlib}
+The inspected Mathlib revision is
+\href{https://github.com/leanprover-community/mathlib4/tree/1ddfaa9548e05b343be9248ae08b73c3425b446e}{\texttt{1ddfaa9548e05b343be9248ae08b73c3425b446e}},
+with Lean \texttt{v4.36.0}. The following source pointers identify the
+foundational results and the intended interfaces. They are not a claim
+that the new lemmas of this document already have Lean proofs.
+
+\subsection{Foundational declarations}
+\begingroup\small\raggedright
+\begin{enumerate}
+\item \ml{GeneralSchauderBasis}, \ml{SchauderBasis}, and \ml{SchauderBasis.exists_norm_proj_le}: continuous coordinates and bounded projections for an already bundled basis. Lemmas~\ref{lem:coordinate-continuity} and \ref{lem:weak-null} clarify the mathematical interface.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/Analysis/Normed/Module/Bases.lean#L104}{\ml{Mathlib/Analysis/Normed/Module/Bases.lean}}.
+\item \ml{SchauderBasis.RankOneDecomposition.basis} and \ml{basis_coe}: the projection conditions verified in Lemma~\ref{lem:basis-criterion} preserve the specified exponential sequence.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/Analysis/Normed/Module/Bases.lean#L464}{\ml{Mathlib/Analysis/Normed/Module/Bases.lean}}.
+\item \ml{ContinuousLinearEquiv.ofBijective}: the bounded inverse theorem in Lemma~\ref{lem:coordinate-continuity}; its coefficient-space domain is proved complete in Lemma~\ref{lem:coefficient-space}.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/Analysis/Normed/Operator/Banach.lean#L439}{\ml{Mathlib/Analysis/Normed/Operator/Banach.lean}}.
+\item \ml{InnerProductSpace.toDual}: representation of the coordinate functionals in Lemma~\ref{lem:weak-null}. Completeness and the complex Hilbert structure are hypotheses of the application.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/Analysis/InnerProductSpace/Dual.lean#L136}{\ml{Mathlib/Analysis/InnerProductSpace/Dual.lean}}.
+\item \ml{Submodule.orthogonalDecomposition}: orthogonal sums use \ml{WithLp 2}, with the Hilbert sum-of-squares metric. Orthogonal projection and the orthogonal-complement density criterion are used throughout.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/Analysis/InnerProductSpace/ProdL2.lean#L88}{\ml{Mathlib/Analysis/InnerProductSpace/ProdL2.lean}}.
+\item \ml{Matrix.gram}, \ml{star_dotProduct_gram_mulVec}, and \ml{posDef_gram_iff_linearIndependent}: these agree with our Gram convention. Lemma~\ref{lem:gram-prefix} gives the finite prefix predicate.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/Analysis/InnerProductSpace/GramMatrix.lean#L40}{\ml{Mathlib/Analysis/InnerProductSpace/GramMatrix.lean}}.
+\item \ml{Matrix.Norms.L2Operator} and \ml{Matrix.l2_opNorm_def}: the matrix norms in this document. The ordinary entrywise matrix norm would not express the estimates proved here.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/Analysis/CStarAlgebra/Matrix.lean#L195}{\ml{Mathlib/Analysis/CStarAlgebra/Matrix.lean}}.
+\item \ml{MatrixOrder}, \ml{Matrix.isStrictlyPositive_iff_posDef}, and the finite matrix functional calculus: Loewner order and square roots are supported. Our inverse variational and averaging arguments are proved directly in Lemma~\ref{lem:inverse-variational}.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/Analysis/Matrix/Order.lean#L54}{\ml{Mathlib/Analysis/Matrix/Order.lean}}.
+\item \ml{LinearMap.IsSymmetric.eigenvectorBasis}: finite self-adjoint diagonalization. Every spectral calculation here is finite-dimensional, or explicitly reduced to the finite range of an information operator.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/Analysis/InnerProductSpace/Spectrum.lean#L296}{\ml{Mathlib/Analysis/InnerProductSpace/Spectrum.lean}}.
+\item \ml{Matrix.PosDef.fromBlocks}$_{11}$ and \ml{Matrix.PosDef.fromBlocks}$_{22}$: finite Schur complements with a positive invertible pivot. The corresponding square completions and specialized identities are included in the proofs.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/LinearAlgebra/Matrix/PosDef.lean#L698}{\ml{Mathlib/LinearAlgebra/Matrix/PosDef.lean}}.
+\item \ml{MeasureTheory.tendsto_integral_of_dominated_convergence}: applied with the majorants specified in Lemmas~\ref{lem:density-transform}, \ref{lem:mean-square}, \ref{lem:positive-product}, and \ref{lem:density-mass}.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/MeasureTheory/Integral/DominatedConvergence.lean#L57}{\ml{Mathlib/MeasureTheory/Integral/DominatedConvergence.lean}}.
+\item \ml{MeasureTheory.integral_prod}, together with Tonelli and monotone convergence for nonnegative integrands: finite product densities, graph averaging, and Gaussian regularization. All product measures are finite or sigma-finite.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/MeasureTheory/Integral/Prod.lean#L443}{\ml{Mathlib/MeasureTheory/Integral/Prod.lean}}.
+\item \ml{MeasureTheory.integral_withDensity_eq_integral_smul} and its variants: the norm and inner-product identities for weighted measures. The definition uses a nonnegative extended-real density.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/MeasureTheory/Integral/Bochner/ContinuousLinearMap.lean#L251}{\ml{Mathlib/MeasureTheory/Integral/Bochner/ContinuousLinearMap.lean}}.
+\item \ml{MeasureTheory.memLp_two_iff_integrable_sq_norm}, the \ml{L2} inner-product formula, and completeness of \ml{Lp}: these support Lemma~\ref{lem:weight-isometry}. Its inverse is justified in the weighted squared norm.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/MeasureTheory/Function/L2Space.lean#L45}{\ml{Mathlib/MeasureTheory/Function/L2Space.lean}}.
+\item \ml{integral_inner}: integration of Hilbert-valued orbit vectors in Lemma~\ref{lem:positive-density}; the continuous integrands on compact intervals are Bochner integrable.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/MeasureTheory/Function/L2Space.lean#L89}{\ml{Mathlib/MeasureTheory/Function/L2Space.lean}}.
+\item \ml{MeasureTheory.NullSingletonClass} and \ml{Set.Countable.measure_zero}: precisely the no-point-mass assumption used in Lemma~\ref{lem:mean-square}.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/MeasureTheory/Measure/Typeclasses/NullSingletonClass.lean#L28}{\ml{Mathlib/MeasureTheory/Measure/Typeclasses/NullSingletonClass.lean}}.
+\item \ml{MeasureTheory.exists_accPt_of_nullSingletonClass}: a positive-measure subset of the real line has an accumulation point. The required separability of the subset is automatic here.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/MeasureTheory/Measure/Typeclasses/NullSingletonClass.lean#L88}{\ml{Mathlib/MeasureTheory/Measure/Typeclasses/NullSingletonClass.lean}}.
+\item \ml{linearIndependent_monoidHom}: independence of distinct characters on the additive real group, encoded by its multiplicative type synonym, in Lemma~\ref{lem:pointwise-independence}.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/LinearAlgebra/LinearIndependent/Basic.lean#L516}{\ml{Mathlib/LinearAlgebra/LinearIndependent/Basic.lean}}.
+\item \ml{AnalyticOnNhd.eqOn_zero_of_preconnected_of_frequently_eq_zero}: the real-analytic, complex-valued identity principle in Lemma~\ref{lem:real-independence}.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/Analysis/Analytic/IsolatedZeros.lean#L210}{\ml{Mathlib/Analysis/Analytic/IsolatedZeros.lean}}.
+\item \ml{AddCircle.span_fourierLp_closure_eq_top}: period one, exponent two, normalized Haar measure. Only the one-variable exhaustion in Lemma~\ref{lem:rare-data} uses this totality result.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/Analysis/Fourier/AddCircle.lean#L259}{\ml{Mathlib/Analysis/Fourier/AddCircle.lean}}.
+\item \ml{UnitAddTorus.mFourier}: the finite auxiliary characters. Their moments and the finite Fejer kernel required here are proved in Lemmas~\ref{lem:character-algebra} and \ref{lem:fejer}.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/Analysis/Fourier/AddCircleMulti.lean#L53}{\ml{Mathlib/Analysis/Fourier/AddCircleMulti.lean}}.
+\item \ml{MeasureTheory.Measure.ext_of_charFun}: finite positive Borel measures on the complete second-countable real line. Lemma~\ref{lem:density-transform} proves the reduction from a complex density.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/MeasureTheory/Measure/CharacteristicFunction/Basic.lean#L256}{\ml{Mathlib/MeasureTheory/Measure/CharacteristicFunction/Basic.lean}}.
+\item \ml{fourier_gaussian_pi}: the positive Gaussian parameter in Lemma~\ref{lem:density-mass} gives exactly the stated Fourier normalization.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/Analysis/SpecialFunctions/Gaussian/FourierTransform.lean#L227}{\ml{Mathlib/Analysis/SpecialFunctions/Gaussian/FourierTransform.lean}}.
+\item \ml{Continuous.fourierInv_fourier_eq}: both integrability hypotheses are established before inversion in Lemma~\ref{lem:density-mass}.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/Analysis/Fourier/Inversion.lean#L175}{\ml{Mathlib/Analysis/Fourier/Inversion.lean}}.
+\item \ml{MeasureTheory.isTightMeasureSet_of_tendsto_charFun}: applied on the real line to the pointwise characteristic-function limit continuous at zero. It supplies tightness, not a pre-assumed limiting measure.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/MeasureTheory/Measure/LevyConvergence.lean#L43}{\ml{Mathlib/MeasureTheory/Measure/LevyConvergence.lean}}.
+\item \ml{isCompact_closure_of_isTightMeasureSet}: weak compactness of the closure of the tight family of Borel probabilities in Lemma~\ref{lem:character-limit}.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/MeasureTheory/Measure/Prokhorov.lean#L553}{\ml{Mathlib/MeasureTheory/Measure/Prokhorov.lean}}.
+\item \ml{MeasureTheory.ProbabilityMeasure.tendsto_iff_forall_integral_rclike_tendsto}: bounded continuous complex characters are legitimate weak test functions.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/MeasureTheory/Measure/ProbabilityMeasure.lean#L374}{\ml{Mathlib/MeasureTheory/Measure/ProbabilityMeasure.lean}}.
+\item \ml{LinearEquiv.extendOfIsometry}: an available implementation of the dense-span extension proved in Lemma~\ref{lem:equal-gram}. Its use does not require independence of the generating families.
+\href{https://github.com/leanprover-community/mathlib4/blob/1ddfaa9548e05b343be9248ae08b73c3425b446e/Mathlib/Analysis/Normed/Operator/Extend.lean#L305}{\ml{Mathlib/Analysis/Normed/Operator/Extend.lean}}.
+\end{enumerate}
+\endgroup
+
+\subsection{Where the audit findings are addressed}
+\begin{enumerate}
+\item Definitions~\ref{def:characters}, \ref{def:prefix},
+\ref{def:scalar}, and \ref{def:states} retain bounded representatives,
+ordered frequencies, scalar data, and stage compatibility explicitly.
+No optimal finite basis constant is constructed.
+\item Lemmas~\ref{lem:inverse-exhaustion}, \ref{lem:row-matrix},
+and \ref{lem:two-projections} separate the changing-dimension inverse
+limit and the two finite matrix calculations previously compressed
+into the row-splitting argument. Lemma~\ref{lem:row-split} works on
+finite Hilbert tuples, with an explicitly given inverse operator.
+\item Lemmas~\ref{lem:scalar-numerics}, \ref{lem:scalar-inverse-step},
+and \ref{lem:scalar-prefix-step} expose every scalar induction
+invariant. Lemmas~\ref{lem:fejer}--\ref{lem:tuning} prove only the
+finite smoothing facts needed for exact-gain scalar supply.
+\item Lemma~\ref{lem:seed-scales} uses an explicit sequence of changing
+finite scalar systems and uniform response estimates.
+Lemmas~\ref{lem:column-bounds} and \ref{lem:selected-prefix} control
+cuts inside columns as well as between columns.
+\item Lemmas~\ref{lem:residual-copies} and \ref{lem:product-tolerance}
+fix the order of all choices and a single common tolerance.
+Lemma~\ref{lem:gram-stability} transfers prefix inequalities directly,
+without continuity of an optimized basis constant.
+\item Lemmas~\ref{lem:schedule}--\ref{lem:limit-prefix} separate skipped
+stages, list lengths, append order, positivity, density, and limiting
+finite inequalities. The ordered sequence is not an arbitrary
+re-enumeration of a frequency set.
+\item Lemmas~\ref{lem:pointwise-independence} and
+\ref{lem:real-independence} use character independence and an analytic
+accumulation point instead of iterated derivatives and Vandermonde
+bookkeeping. Lemmas~\ref{lem:positive-density}--\ref{lem:character-limit}
+use a positive orbit integral and the existing tightness theorem.
+\item Lemmas~\ref{lem:equal-gram} and \ref{lem:weight-isometry} give the
+two isometry constructions separately, with well-definedness and
+surjectivity proved. The latter does not assume the reciprocal weight
+is essentially bounded.
+\end{enumerate}
+
+\subsection{Correspondence with the target and provenance}
+The statement with label \ml{thm:main} is unchanged from
+\ml{paper.tex}. In \ml{Showcase.lean}, the composition law plus
+invertibility gives the identities in Lemma~\ref{lem:group}.
+The definitions of cyclic vector and common eigenvector agree with
+those in Section~1. Lemma~\ref{lem:coordinate-continuity} reconciles
+the conventional expansion-only definition with Mathlib's continuous
+coordinates, and Lemma~\ref{lem:basis-criterion} verifies the data for
+its existing basis constructor. The only index change is the shift
+between natural numbers starting at zero and positive integers.
+The inner-product convention changes notation, not the theorem.
+
+The finite scalar and directional method follows the mathematical
+argument in the original paper and its cited source \cite{FLT}.
+The reference records provenance; every specialized step needed here
+has a proof above. No external Lean implementation has been reused.
+This document is a mathematical foundation for a future formalization;
+it is not a claim that the proof has been checked by the Lean kernel.
+
+\begin{thebibliography}{9}
+\raggedright
+\bibitem{FLT} D.~Freeman, L.~Liehr and M.~A.~Taylor,
+\emph{Structured coordinate systems in $L^p(\R)$},
+\href{https://arxiv.org/html/2610.18709v2}{arXiv:2610.18709v2}, 2026.
+\end{thebibliography}
+\end{document}

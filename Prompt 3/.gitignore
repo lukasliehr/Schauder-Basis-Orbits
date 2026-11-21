@@ -1,0 +1,26 @@
+# Lean build output and downloaded dependencies
+.lake/
+*.olean
+*.ilean
+*.olean.server
+*.olean.private
+
+# LaTeX build output
+*.aux
+*.fdb_latexmk
+*.fls
+*.log
+*.out
+*.synctex.gz
+*.toc
+
+# Local files
+AGENTS.md
+scripts/
+__pycache__/
+*.py[cod]
+.DS_Store
+.env
+.env.*
+!.env.example
+.prompt-snapshot-*/

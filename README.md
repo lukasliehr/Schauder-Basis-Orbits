@@ -24,13 +24,15 @@ theorem MainResult
 
 This branch is the version of the project for the [Palomar registry](https://palomar-registry.org/). The branch `main` contains the project as it was produced.
 
-- `Challenge.lean` states the theorem as `MainResult`, together with the five definitions it uses. It imports only Mathlib and its proof is `sorry`. This is the statement to audit.
+- `Challenge.lean` states the theorem as `MainResult`, together with the five definitions it uses. It imports only three Mathlib modules and its proof is `sorry`. This is the statement to audit.
 - `Solution.lean` repeats the same definitions and statement and proves `MainResult` from the library theorem `SchauderBasisOrbits.mainResult`. It is the file `Showcase.lean` of the branch `main`.
 - `LeanCode/` is the proof library.
 - `comparator.json` tells Comparator to compare `MainResult` in the two files and permits the axioms `propext`, `Quot.sound` and `Classical.choice`.
 - `formalization.yaml` records sources, authorship, automation and review.
 
 Palomar requires every Lean file of a repository to use Lean's module system. On this branch all Lean files, including those in the `Prompt X` folders, are therefore ported. The port adds the module header to each file, makes 34 private declarations public and writes out two inferred arguments. No statement was changed.
+
+This branch uses Lean v4.36.0-rc2 with the last Mathlib revision for that toolchain. The branch `main` and the `Prompt 5` snapshot use Lean v4.36.0 with a Mathlib revision which is two days newer. The reason is that Palomar renders the Challenge by building its imports, and this does not yet work for Lean v4.36.0. For the same reason `Challenge.lean` imports three Mathlib modules instead of all of Mathlib. Three declarations in `LeanCode/` are adapted to the older Mathlib revision, in `Fourier/Graph.lean`, `Finite/Tuples.lean` and `Spectral/Realization.lean`. Two of them use the earlier name of a Mathlib declaration and one proves a norm identity directly which Mathlib did not contain yet. No theorem statement was changed.
 
 ## Source and scope
 

@@ -105,6 +105,13 @@ automation:
         wrote out two inferred arguments explicitly (in
         LeanCode/Finite/ColumnMatrix.lean and
         LeanCode/Directional/SelectedMeans.lean). No statement was changed.
+        The project was then moved from Lean v4.36.0 to Lean v4.36.0-rc2 with
+        a Mathlib revision which is two days older, and the imports of the
+        Challenge were restricted to three Mathlib modules, so that Palomar can
+        render the Challenge. For this, three declarations were adapted to the
+        older Mathlib revision (in LeanCode/Fourier/Graph.lean,
+        LeanCode/Finite/Tuples.lean and LeanCode/Spectral/Realization.lean).
+        No theorem statement was changed.
       cost:
         wall_time: "one session"
         spend_usd: "subscription-based"
@@ -115,7 +122,8 @@ automation:
     was supplied by the authors in Showcase.lean before any proof was written.
     Prompt 5/RESULT.md records that the proof step changed Showcase.lean only
     by adding one import and replacing sorry by the proof. On this branch
-    Solution.lean is that file and Challenge.lean is its statement with sorry.
+    Solution.lean is that file and Challenge.lean is its statement with sorry
+    and with only the Mathlib imports which the statement needs.
 
 fidelity:
   divergences: >-

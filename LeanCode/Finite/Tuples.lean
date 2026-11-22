@@ -191,7 +191,7 @@ theorem activated_adjoint (A : Matrix ι ι 𝕜) (D : E →L[𝕜] E) :
 /-- The activated quadratic metric is realized as this continuous linear equivalence. -/
 def activatedSqrtEquiv (A : Matrix ι ι 𝕜) (hA : A.PosDef)
     (D : E →L[𝕜] E) (hD : IsIdempotentElem D) : HilbertTuple ι E ≃L[𝕜] HilbertTuple ι E :=
-  ContinuousLinearEquiv.ofContinuousLinearMap
+  ContinuousLinearEquiv.equivOfInverse'
     (f₁ := activated (CFC.sqrt A) D) (f₂ := activated (CFC.sqrt A)⁻¹ D)
     (by
       change activated (CFC.sqrt A) D * activated (CFC.sqrt A)⁻¹ D = 1

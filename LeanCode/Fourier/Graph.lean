@@ -124,7 +124,7 @@ noncomputable def phaseAverage (N : ℕ) (t : ℝ) : ℂ :=
   (∑ j ∈ Finset.range N, realChar j t) / N
 
 private theorem realChar_nat (j : ℕ) (t : ℝ) : realChar j t = realChar 1 t ^ j := by
-  rw [realChar, realChar, ← Complex.exp_natCast_mul]
+  rw [realChar, realChar, ← Complex.exp_nat_mul]
   congr 1
   push_cast
   ring

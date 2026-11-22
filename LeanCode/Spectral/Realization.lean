@@ -51,9 +51,11 @@ noncomputable def realCharMul (μ : Measure ℝ) (t : ℝ) : Lp ℂ 2 μ ≃ₗ�
     simp only [Pi.smul_apply, smul_eq_mul, hf]
     ring
   norm_map' f := by
-    apply Lp.norm_eq_norm_of_ae_eq
-    filter_upwards [ae_realCharMulLp μ t f] with x hx
-    simp [hx]
+    have h : ∀ᵐ x ∂μ, ‖realCharMulLp μ t f x‖ = ‖f x‖ := by
+      filter_upwards [ae_realCharMulLp μ t f] with x hx
+      simp [hx]
+    exact le_antisymm (Lp.norm_le_norm_of_ae_le (h.mono fun _ hx ↦ hx.le))
+      (Lp.norm_le_norm_of_ae_le (h.mono fun _ hx ↦ hx.ge))
 
 theorem ae_realCharMul (μ : Measure ℝ) (t : ℝ) (f : Lp ℂ 2 μ) :
     ⇑(realCharMul μ t f) =ᵐ[μ] fun x ↦ realChar t x * f x :=

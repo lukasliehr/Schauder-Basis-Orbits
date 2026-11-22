@@ -1,4 +1,8 @@
-import LeanCode.Target.Definitions
+module
+
+public import LeanCode.Target.Definitions
+
+@[expose] public section
 
 open Function Submodule
 open scoped InnerProductSpace

@@ -1,4 +1,8 @@
-import LeanCode.Scalar.ActivationGeometry
+module
+
+public import LeanCode.Scalar.ActivationGeometry
+
+@[expose] public section
 
 open Filter Matrix MeasureTheory ContinuousLinearMap
 open scoped ENNReal ComplexOrder MatrixOrder InnerProductSpace InnerProduct Topology

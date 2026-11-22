@@ -1,5 +1,9 @@
-import LeanCode.Scalar.Data
-import LeanCode.Scalar.Budgets
+module
+
+public import LeanCode.Scalar.Data
+public import LeanCode.Scalar.Budgets
+
+@[expose] public section
 
 open MeasureTheory Matrix Complex
 open scoped ComplexConjugate ComplexOrder MatrixOrder
@@ -21,9 +25,9 @@ private lemma integral_torusChar_zero {ι : Type*} [Fintype ι] {k : ι → ℤ}
   simpa [charGram, m, Matrix.one_apply] using h
 
 /-- The mode one on the one-coordinate torus. -/
-private def initialMode : Fin 1 → ℤ := fun _ => 1
+def initialMode : Fin 1 → ℤ := fun _ => 1
 
-private lemma initialMode_ne_zero : initialMode ≠ 0 := by
+lemma initialMode_ne_zero : initialMode ≠ 0 := by
   intro h
   have hc := congrFun h 0
   norm_num [initialMode] at hc
@@ -37,7 +41,7 @@ private lemma initialMode_add_ne_zero : initialMode + initialMode ≠ 0 := by
 noncomputable def initialWeight (a : ℝ) (x : UnitAddTorus (Fin 1)) : ℝ :=
   1 - a + a * (torusChar initialMode x).re
 
-private lemma initialWeight_bounds {a : ℝ} (ha : 0 ≤ a) (x : UnitAddTorus (Fin 1)) :
+lemma initialWeight_bounds {a : ℝ} (ha : 0 ≤ a) (x : UnitAddTorus (Fin 1)) :
     1 - 2 * a ≤ initialWeight a x ∧ initialWeight a x ≤ 1 := by
   have h := Complex.abs_re_le_norm (torusChar initialMode x)
   rw [norm_torusChar, abs_le] at h
@@ -139,7 +143,7 @@ lemma initialData_floor (a : ℝ) (ha : 0 < a) (ha' : a ≤ 1 / 400) :
   exact hb.trans (initialData a ha ha').gram_bounds.1
 
 
-private noncomputable def initialCenterEntry (a : ℝ) : ℝ :=
+noncomputable def initialCenterEntry (a : ℝ) : ℝ :=
   (1 - a) - (1 - a)⁻¹ * ((a / 2) * (a / 2))
 
 lemma initialData_centerGram (a : ℝ) (ha : 0 < a) (ha' : a ≤ 1 / 400) :

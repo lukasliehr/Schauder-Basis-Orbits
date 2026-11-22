@@ -1,7 +1,11 @@
-import LeanCode.Target.Group
-import LeanCode.Fourier.RealTotality
-import LeanCode.Spectral.Triangle
-import Mathlib.Analysis.SpecialFunctions.Gaussian.FourierTransform
+module
+
+public import LeanCode.Target.Group
+public import LeanCode.Fourier.RealTotality
+public import LeanCode.Spectral.Triangle
+public import Mathlib.Analysis.SpecialFunctions.Gaussian.FourierTransform
+
+@[expose] public section
 
 open Complex MeasureTheory Set Filter
 open scoped FourierTransform InnerProductSpace ComplexConjugate

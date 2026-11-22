@@ -1,6 +1,10 @@
-import LeanCode.Finite.Families
-import LeanCode.Fourier.RealTotality
-import Mathlib
+module
+
+public import LeanCode.Finite.Families
+public import LeanCode.Fourier.RealTotality
+public import Mathlib
+
+@[expose] public section
 
 open Filter MeasureTheory Submodule
 open scoped ENNReal InnerProductSpace Topology

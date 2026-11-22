@@ -1,4 +1,8 @@
-import LeanCode.Construction.ProductPackets
+module
+
+public import LeanCode.Construction.ProductPackets
+
+@[expose] public section
 
 open MeasureTheory Filter
 open scoped BigOperators InnerProductSpace

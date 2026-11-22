@@ -1,6 +1,10 @@
-import LeanCode.Measure.Products
-import Mathlib.MeasureTheory.Integral.Pi
-import Mathlib.Probability.Independence.Integration
+module
+
+public import LeanCode.Measure.Products
+public import Mathlib.MeasureTheory.Integral.Pi
+public import Mathlib.Probability.Independence.Integration
+
+@[expose] public section
 
 open MeasureTheory Set Filter
 open scoped BigOperators ENNReal

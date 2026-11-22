@@ -1,5 +1,9 @@
-import LeanCode.Directional.SeedParameters
-import Mathlib
+module
+
+public import LeanCode.Directional.SeedParameters
+public import Mathlib
+
+@[expose] public section
 
 open Filter
 open scoped Topology

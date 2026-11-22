@@ -1,4 +1,8 @@
-import LeanCode.Fourier.Graph
+module
+
+public import LeanCode.Fourier.Graph
+
+@[expose] public section
 
 open MeasureTheory Function
 open scoped BigOperators

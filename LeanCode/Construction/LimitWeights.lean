@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Filter MeasureTheory
 open scoped ENNReal Topology BigOperators

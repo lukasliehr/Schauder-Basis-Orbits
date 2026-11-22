@@ -1,5 +1,9 @@
-import LeanCode.Scalar.Copies
-import LeanCode.Scalar.ActivationGeometry
+module
+
+public import LeanCode.Scalar.Copies
+public import LeanCode.Scalar.ActivationGeometry
+
+@[expose] public section
 
 open Matrix
 open scoped MatrixOrder ComplexOrder

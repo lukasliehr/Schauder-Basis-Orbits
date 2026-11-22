@@ -1,4 +1,8 @@
-import LeanCode.Finite.Families
+module
+
+public import LeanCode.Finite.Families
+
+@[expose] public section
 
 /-! Scalar matrices acting on finite tuples with the Hilbert sum-of-squares norm. -/
 
@@ -230,14 +234,14 @@ section Indicator
 variable {α : Type*} [MeasurableSpace α] (μ : Measure α)
 variable {D : Set α} (hD : MeasurableSet D)
 
-private def lpIndicatorFun (f : Lp ℂ 2 μ) : Lp ℂ 2 μ :=
+def lpIndicatorFun (f : Lp ℂ 2 μ) : Lp ℂ 2 μ :=
   ((Lp.memLp f).indicator hD.nullMeasurableSet).toLp (D.indicator f)
 
 private theorem ae_lpIndicatorFun (f : Lp ℂ 2 μ) :
     ⇑(lpIndicatorFun μ hD f) =ᵐ[μ] D.indicator f :=
   MemLp.coeFn_toLp _
 
-private def lpIndicatorLinear : Lp ℂ 2 μ →ₗ[ℂ] Lp ℂ 2 μ where
+def lpIndicatorLinear : Lp ℂ 2 μ →ₗ[ℂ] Lp ℂ 2 μ where
   toFun := lpIndicatorFun μ hD
   map_add' f g := by
     apply Lp.ext

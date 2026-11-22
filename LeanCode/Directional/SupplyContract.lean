@@ -1,6 +1,10 @@
-import LeanCode.Directional.Seed
-import LeanCode.Directional.Amplification
-import LeanCode.Measure.Information
+module
+
+public import LeanCode.Directional.Seed
+public import LeanCode.Directional.Amplification
+public import LeanCode.Measure.Information
+
+@[expose] public section
 
 open Function MeasureTheory Submodule
 open scoped ENNReal

@@ -1,7 +1,11 @@
-import LeanCode.Scalar.Initial
-import LeanCode.Scalar.Inverse
-import LeanCode.Scalar.ActivationExhaustion
-import LeanCode.Scalar.Joining
+module
+
+public import LeanCode.Scalar.Initial
+public import LeanCode.Scalar.Inverse
+public import LeanCode.Scalar.ActivationExhaustion
+public import LeanCode.Scalar.Joining
+
+@[expose] public section
 
 open Filter Matrix
 open scoped Topology MatrixOrder ComplexOrder

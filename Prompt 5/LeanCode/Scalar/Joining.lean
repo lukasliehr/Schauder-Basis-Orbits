@@ -1,5 +1,9 @@
-import LeanCode.Scalar.Inverse
-import LeanCode.Finite.Projection
+module
+
+public import LeanCode.Scalar.Inverse
+public import LeanCode.Finite.Projection
+
+@[expose] public section
 
 open Matrix
 open scoped ComplexOrder MatrixOrder
@@ -8,7 +12,7 @@ namespace SchauderBasisOrbits.Scalar
 
 variable {r n : ℕ} (D : Data r n) {L : ℕ} (hL : 0 < L)
 
-private def blockCoeffs (c : Fin (L * n) → ℝ) (b : Fin L) : Fin n → ℝ :=
+def blockCoeffs (c : Fin (L * n) → ℝ) (b : Fin L) : Fin n → ℝ :=
   fun i => c (finProdFinEquiv (b, i))
 
 lemma copies_normalizedMean_dotProduct (c : Fin (L * n) → ℝ) :

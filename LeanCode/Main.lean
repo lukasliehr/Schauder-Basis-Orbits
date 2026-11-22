@@ -1,9 +1,13 @@
-import LeanCode.Basis.Transport
-import LeanCode.Construction.WeightedBasis
-import LeanCode.Construction.Normalization
-import LeanCode.Target.Reverse
-import LeanCode.Construction.ProductStep
-import LeanCode.Directional.Selection
+module
+
+public import LeanCode.Basis.Transport
+public import LeanCode.Construction.WeightedBasis
+public import LeanCode.Construction.Normalization
+public import LeanCode.Target.Reverse
+public import LeanCode.Construction.ProductStep
+public import LeanCode.Directional.Selection
+
+@[expose] public section
 
 open Function MeasureTheory TopologicalSpace
 

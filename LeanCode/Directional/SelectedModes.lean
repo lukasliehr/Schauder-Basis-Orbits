@@ -1,4 +1,8 @@
-import LeanCode.Directional.SelectedGram
+module
+
+public import LeanCode.Directional.SelectedGram
+
+@[expose] public section
 
 open Filter Function MeasureTheory
 open scoped ENNReal

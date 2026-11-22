@@ -1,5 +1,9 @@
-import LeanCode.Scalar.Data
-import LeanCode.Scalar.MatrixMix
+module
+
+public import LeanCode.Scalar.Data
+public import LeanCode.Scalar.MatrixMix
+
+@[expose] public section
 
 open Matrix MeasureTheory Complex
 open scoped MatrixOrder ComplexOrder ComplexConjugate InnerProductSpace ENNReal

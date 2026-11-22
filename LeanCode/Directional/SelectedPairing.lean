@@ -1,6 +1,10 @@
-import LeanCode.Directional.SelectedMeans
-import LeanCode.Directional.RowMetric
-import LeanCode.Measure.Information
+module
+
+public import LeanCode.Directional.SelectedMeans
+public import LeanCode.Directional.RowMetric
+public import LeanCode.Measure.Information
+
+@[expose] public section
 
 open Filter Function MeasureTheory Submodule Matrix
 open scoped ENNReal BigOperators ComplexConjugate InnerProductSpace

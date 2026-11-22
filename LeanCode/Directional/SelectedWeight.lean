@@ -1,6 +1,10 @@
-import LeanCode.Directional.Seed
-import LeanCode.Scalar.Data
-import LeanCode.Measure.PiProducts
+module
+
+public import LeanCode.Directional.Seed
+public import LeanCode.Scalar.Data
+public import LeanCode.Measure.PiProducts
+
+@[expose] public section
 
 open Filter Function MeasureTheory
 open scoped ENNReal BigOperators ComplexConjugate

@@ -1,6 +1,10 @@
-import LeanCode.Scalar.Activation
-import LeanCode.Finite.Tuples
-import LeanCode.Scalar.MatrixMix
+module
+
+public import LeanCode.Scalar.Activation
+public import LeanCode.Finite.Tuples
+public import LeanCode.Scalar.MatrixMix
+
+@[expose] public section
 
 open MeasureTheory Matrix ContinuousLinearMap
 open scoped ENNReal ComplexConjugate ComplexOrder MatrixOrder InnerProductSpace InnerProduct

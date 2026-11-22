@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 open Filter Function
 open scoped Topology
@@ -29,7 +33,7 @@ theorem le_roundStart (m : ℕ) : m ≤ roundStart m := by
 theorem strictMono_roundStart : StrictMono roundStart :=
   strictMono_nat_of_lt_succ fun n => by rw [roundStart_succ]; omega
 
-private theorem exists_round (n : ℕ) : ∃ m, n < roundStart (m + 1) :=
+theorem exists_round (n : ℕ) : ∃ m, n < roundStart (m + 1) :=
   ⟨n, lt_of_lt_of_le (Nat.lt_succ_self n) (le_roundStart _)⟩
 
 /-- The round containing visit `n`. -/

@@ -1,4 +1,8 @@
-import LeanCode.Measure.Information
+module
+
+public import LeanCode.Measure.Information
+
+@[expose] public section
 
 open MeasureTheory ContinuousLinearMap Function
 open scoped ComplexOrder MatrixOrder

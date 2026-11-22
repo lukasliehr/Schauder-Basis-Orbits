@@ -1,5 +1,9 @@
-import LeanCode.Fourier.Characters
-import Mathlib
+module
+
+public import LeanCode.Fourier.Characters
+public import Mathlib
+
+@[expose] public section
 
 open Filter MeasureTheory Complex
 open scoped BigOperators Topology ComplexConjugate
@@ -190,7 +194,7 @@ theorem ae_no_integer_resonance (μ : Measure ℝ) [IsFiniteMeasure μ] [NullSin
 noncomputable def graphCoefficient (μ : Measure ℝ) (g : ℝ → ℂ) (l : ℝ) (j : ℕ) : ℂ :=
   ∫ x, g x * realChar ((j : ℝ) * l) x ∂μ
 
-private theorem integrable_graphIntegrand {μ : Measure ℝ} {g : ℝ → ℂ}
+theorem integrable_graphIntegrand {μ : Measure ℝ} {g : ℝ → ℂ}
     (hg : Integrable g μ) (t : ℝ) : Integrable (fun x => g x * realChar t x) μ :=
   hg.mul_bdd (continuous_realChar t).aestronglyMeasurable
     (Eventually.of_forall fun x => (norm_realChar t x).le)

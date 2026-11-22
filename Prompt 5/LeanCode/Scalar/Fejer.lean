@@ -1,5 +1,9 @@
-import LeanCode.Scalar.Data
-import LeanCode.Fourier.TorusPolynomial
+module
+
+public import LeanCode.Scalar.Data
+public import LeanCode.Fourier.TorusPolynomial
+
+@[expose] public section
 
 open Filter MeasureTheory Matrix Complex
 open scoped ComplexConjugate BigOperators InnerProductSpace ENNReal Topology

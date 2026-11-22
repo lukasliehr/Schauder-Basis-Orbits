@@ -1,6 +1,10 @@
-import LeanCode.Scalar.MatrixMix
-import LeanCode.Scalar.Prefix
-import LeanCode.Fourier.TorusPolynomial
+module
+
+public import LeanCode.Scalar.MatrixMix
+public import LeanCode.Scalar.Prefix
+public import LeanCode.Fourier.TorusPolynomial
+
+@[expose] public section
 
 open MeasureTheory Complex Matrix
 open scoped MatrixOrder ComplexOrder ComplexConjugate Topology

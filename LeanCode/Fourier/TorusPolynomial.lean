@@ -1,5 +1,9 @@
-import LeanCode.Fourier.Characters
-import Mathlib.Algebra.MonoidAlgebra.MapDomain
+module
+
+public import LeanCode.Fourier.Characters
+public import Mathlib.Algebra.MonoidAlgebra.MapDomain
+
+@[expose] public section
 
 open scoped ComplexConjugate
 

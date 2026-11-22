@@ -1,26 +1,30 @@
-import LeanCode.Spectral.Measure
-import LeanCode.Spectral.GramIsometry
+module
+
+public import LeanCode.Spectral.Measure
+public import LeanCode.Spectral.GramIsometry
+
+@[expose] public section
 
 open Function MeasureTheory Set Filter
 open scoped ENNReal InnerProductSpace
 
 namespace SchauderBasisOrbits
 
-private theorem memLp_realChar_mul (μ : Measure ℝ) (t : ℝ) (f : Lp ℂ 2 μ) :
+theorem memLp_realChar_mul (μ : Measure ℝ) (t : ℝ) (f : Lp ℂ 2 μ) :
     MemLp (fun x ↦ realChar t x * f x) 2 μ := by
   apply (Lp.memLp f).congr_norm
     ((continuous_realChar t).aestronglyMeasurable.mul (Lp.aestronglyMeasurable f))
   filter_upwards [] with x
   simp
 
-private noncomputable def realCharMulLp (μ : Measure ℝ) (t : ℝ) (f : Lp ℂ 2 μ) :
+noncomputable def realCharMulLp (μ : Measure ℝ) (t : ℝ) (f : Lp ℂ 2 μ) :
     Lp ℂ 2 μ := (memLp_realChar_mul μ t f).toLp _
 
 private theorem ae_realCharMulLp (μ : Measure ℝ) (t : ℝ) (f : Lp ℂ 2 μ) :
     ⇑(realCharMulLp μ t f) =ᵐ[μ] fun x ↦ realChar t x * f x :=
   MemLp.coeFn_toLp _
 
-private theorem realCharMulLp_neg_left_inv (μ : Measure ℝ) (t : ℝ) (f : Lp ℂ 2 μ) :
+theorem realCharMulLp_neg_left_inv (μ : Measure ℝ) (t : ℝ) (f : Lp ℂ 2 μ) :
     realCharMulLp μ (-t) (realCharMulLp μ t f) = f := by
   apply Lp.ext
   filter_upwards [ae_realCharMulLp μ (-t) (realCharMulLp μ t f), ae_realCharMulLp μ t f] with x hn ht

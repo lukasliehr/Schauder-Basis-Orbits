@@ -1,5 +1,9 @@
-import Mathlib.Analysis.Fourier.AddCircleMulti
-import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+module
+
+public import Mathlib.Analysis.Fourier.AddCircleMulti
+public import Mathlib.Analysis.SpecialFunctions.Trigonometric.Basic
+
+@[expose] public section
 
 open scoped BigOperators ComplexConjugate
 open Complex

@@ -1,6 +1,10 @@
-import LeanCode.Measure.Products
-import LeanCode.Finite.Families
-import Mathlib.Analysis.InnerProductSpace.Positive
+module
+
+public import LeanCode.Measure.Products
+public import LeanCode.Finite.Families
+public import Mathlib.Analysis.InnerProductSpace.Positive
+
+@[expose] public section
 
 open MeasureTheory Filter Submodule ContinuousLinearMap
 open scoped InnerProductSpace ComplexConjugate NNReal ComplexOrder MatrixOrder

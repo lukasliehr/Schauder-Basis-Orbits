@@ -1,4 +1,8 @@
-import LeanCode.Finite.BlockPrefixes
+module
+
+public import LeanCode.Finite.BlockPrefixes
+
+@[expose] public section
 
 open scoped BigOperators InnerProductSpace
 

@@ -1,7 +1,11 @@
-import LeanCode.Directional.SelectedPrefixData
-import LeanCode.Directional.Amplification
-import LeanCode.Finite.ColumnCuts
-import LeanCode.Finite.PartialColumn
+module
+
+public import LeanCode.Directional.SelectedPrefixData
+public import LeanCode.Directional.Amplification
+public import LeanCode.Finite.ColumnCuts
+public import LeanCode.Finite.PartialColumn
+
+@[expose] public section
 
 open Filter Function MeasureTheory Matrix
 open scoped BigOperators InnerProductSpace MatrixOrder ComplexOrder

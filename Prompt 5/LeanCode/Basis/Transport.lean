@@ -1,6 +1,10 @@
-import LeanCode.Basis.WeightedIsometry
-import LeanCode.Spectral.Realization
-import Mathlib.Analysis.Normed.Module.Bases
+module
+
+public import LeanCode.Basis.WeightedIsometry
+public import LeanCode.Spectral.Realization
+public import Mathlib.Analysis.Normed.Module.Bases
+
+@[expose] public section
 
 open Filter Function MeasureTheory
 

@@ -1,6 +1,10 @@
-import LeanCode.Directional.SelectedCentering
-import LeanCode.Directional.SupplyContract
-import LeanCode.Measure.FiberTransport
+module
+
+public import LeanCode.Directional.SelectedCentering
+public import LeanCode.Directional.SupplyContract
+public import LeanCode.Measure.FiberTransport
+
+@[expose] public section
 
 open Filter Function MeasureTheory Submodule
 open scoped ENNReal ComplexOrder Topology
@@ -36,7 +40,7 @@ def selectedCoordinateEquiv (ι : Type*) (L r : ℕ) :
     ((ι ⊕ Fin L) ⊕ Fin r) ≃ (ι ⊕ Fin (L + r)) :=
   (Equiv.sumAssoc ι (Fin L) (Fin r)).trans ((Equiv.refl ι).sumCongr finSumFinEquiv)
 
-private lemma selectedCoordinateEquiv_pullback
+lemma selectedCoordinateEquiv_pullback
     (p : Base ι × UnitAddTorus (Fin (L + r))) :
     (Sum.elim p.1.2 p.2) ∘ selectedCoordinateEquiv ι L r =
       Sum.elim (Sum.elim p.1.2 ((selectedFiberEquiv L r p.2).1))

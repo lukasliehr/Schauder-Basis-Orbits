@@ -1,7 +1,11 @@
-import LeanCode.Directional.SelectedMeans
-import LeanCode.Directional.SelectedModes
-import LeanCode.Measure.Information
-import LeanCode.Finite.BlockPrefixes
+module
+
+public import LeanCode.Directional.SelectedMeans
+public import LeanCode.Directional.SelectedModes
+public import LeanCode.Measure.Information
+public import LeanCode.Finite.BlockPrefixes
+
+@[expose] public section
 
 open Filter Function MeasureTheory Matrix Submodule
 open scoped ENNReal ComplexOrder InnerProductSpace InnerProduct
@@ -119,7 +123,7 @@ private def selectedTailMeanVector (i : Fin (n * q)) : Lp ℂ 2 ρ :=
   lift₂ ρ ((W).mean (D.rawSelectedTail S i)) ((W).measurable_mean (D.measurable_rawSelectedTail S i))
     1 ((W).norm_mean_le (D.measurable_rawSelectedTail S i) (fun p => (D.norm_rawSelectedTail S i p).le))
 
-private def selectedTailCenterVector (i : Fin (n * q)) : Lp ℂ 2 ((W).normalizedMeasure ρ) :=
+def selectedTailCenterVector (i : Fin (n * q)) : Lp ℂ 2 ((W).normalizedMeasure ρ) :=
   lift₂ _ ((W).center (D.rawSelectedTail S i)) ((W).measurable_center (D.measurable_rawSelectedTail S i))
     (2 * 1) ((W).norm_center_le (D.measurable_rawSelectedTail S i) (fun p => (D.norm_rawSelectedTail S i p).le))
 

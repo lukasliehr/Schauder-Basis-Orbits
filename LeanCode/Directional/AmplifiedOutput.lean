@@ -1,4 +1,8 @@
-import LeanCode.Directional.CopyPackets
+module
+
+public import LeanCode.Directional.CopyPackets
+
+@[expose] public section
 
 open Filter Function MeasureTheory
 open scoped Topology ENNReal ComplexOrder
@@ -41,7 +45,7 @@ private lemma amplify_information_error (P : SelectedPacket D Ks ε) {N : ℕ}
     simpa only [mul_one] using mul_le_mul_of_nonneg_left P.leakOp_norm
       (mul_nonneg (by positivity : 0 ≤ (N : ℝ)) P.leak_nonneg))
 
-private lemma copied_output_linear_prefix {P : SelectedPacket D Ks ε} {N : ℕ}
+lemma copied_output_linear_prefix {P : SelectedPacket D Ks ε} {N : ℕ}
     (A : AmplifiedFamily P N) {η : ℝ}
     (hSq : selectedPrefixSq Ks D.K ε ≤ selectedPrefixSq Ks D.K 0 + η) :
     PB (directionalSynthesis ρ A.W A.freq).centeredGram

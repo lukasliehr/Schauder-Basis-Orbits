@@ -1,6 +1,10 @@
-import LeanCode.Construction.LineStep
-import LeanCode.Fourier.Coordinates
-import LeanCode.Measure.Products
+module
+
+public import LeanCode.Construction.LineStep
+public import LeanCode.Fourier.Coordinates
+public import LeanCode.Measure.Products
+
+@[expose] public section
 
 open Filter MeasureTheory Function
 open scoped ENNReal Topology BigOperators ComplexConjugate

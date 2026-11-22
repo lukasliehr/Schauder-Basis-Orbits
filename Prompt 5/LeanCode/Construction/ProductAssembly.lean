@@ -1,6 +1,10 @@
-import LeanCode.Construction.ResidualLift
-import LeanCode.Construction.Normalization
-import LeanCode.Construction.ProductGeometry
+module
+
+public import LeanCode.Construction.ResidualLift
+public import LeanCode.Construction.Normalization
+public import LeanCode.Construction.ProductGeometry
+
+@[expose] public section
 
 open MeasureTheory Filter Submodule
 open scoped InnerProductSpace BigOperators

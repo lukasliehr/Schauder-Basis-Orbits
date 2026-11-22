@@ -1,5 +1,10 @@
-import LeanCode.Finite.Tuples
-import LeanCode.Finite.RowMatrix
+module
+
+public import LeanCode.Finite.Tuples
+public import LeanCode.Finite.RowMatrix
+
+@[expose] public section
+
 /-! The sharp activated row cut bound, assembled over the exhaustive fiber decomposition. -/
 
 set_option maxHeartbeats 500000

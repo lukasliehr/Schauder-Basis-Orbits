@@ -1,4 +1,8 @@
-import LeanCode.Directional.ProjectionResponse
+module
+
+public import LeanCode.Directional.ProjectionResponse
+
+@[expose] public section
 
 open Matrix
 open scoped MatrixOrder ComplexOrder ComplexConjugate BigOperators

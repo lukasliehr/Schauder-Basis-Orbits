@@ -1,7 +1,11 @@
-import LeanCode.Directional.SelectedProjection
-import LeanCode.Directional.SeedResponse
-import LeanCode.Directional.SelectedCentering
-import LeanCode.Directional.CaptureOperator
+module
+
+public import LeanCode.Directional.SelectedProjection
+public import LeanCode.Directional.SeedResponse
+public import LeanCode.Directional.SelectedCentering
+public import LeanCode.Directional.CaptureOperator
+
+@[expose] public section
 
 open Filter Function MeasureTheory Submodule Matrix ContinuousLinearMap InnerProductSpace
 open scoped ENNReal BigOperators ComplexConjugate InnerProductSpace MatrixOrder ComplexOrder

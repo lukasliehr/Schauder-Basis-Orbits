@@ -1,6 +1,10 @@
-import LeanCode.Measure.PiProducts
-import LeanCode.Measure.Information
-import LeanCode.Finite.DependentBlocks
+module
+
+public import LeanCode.Measure.PiProducts
+public import LeanCode.Measure.Information
+public import LeanCode.Finite.DependentBlocks
+
+@[expose] public section
 
 open MeasureTheory Filter Matrix ContinuousLinearMap
 open scoped BigOperators InnerProductSpace ComplexConjugate

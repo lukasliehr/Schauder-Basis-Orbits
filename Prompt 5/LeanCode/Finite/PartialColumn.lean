@@ -1,5 +1,9 @@
-import LeanCode.Finite.ColumnMatrix
-import LeanCode.Finite.Projection
+module
+
+public import LeanCode.Finite.ColumnMatrix
+public import LeanCode.Finite.Projection
+
+@[expose] public section
 
 open Matrix ContinuousLinearMap
 open scoped BigOperators ComplexOrder MatrixOrder Matrix.Norms.L2Operator InnerProduct

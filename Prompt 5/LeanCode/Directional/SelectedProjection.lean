@@ -1,7 +1,11 @@
-import LeanCode.Directional.RowCoordinates
-import LeanCode.Finite.ColumnMatrix
-import LeanCode.Directional.SelectedPairing
-import LeanCode.Directional.BlockResponse
+module
+
+public import LeanCode.Directional.RowCoordinates
+public import LeanCode.Finite.ColumnMatrix
+public import LeanCode.Directional.SelectedPairing
+public import LeanCode.Directional.BlockResponse
+
+@[expose] public section
 
 open Filter Function MeasureTheory Submodule Matrix ContinuousLinearMap
 open scoped ENNReal BigOperators ComplexConjugate InnerProductSpace MatrixOrder ComplexOrder

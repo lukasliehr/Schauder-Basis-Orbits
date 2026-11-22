@@ -1,5 +1,9 @@
-import LeanCode.Target.Group
-import LeanCode.Basis.Criterion
+module
+
+public import LeanCode.Target.Group
+public import LeanCode.Basis.Criterion
+
+@[expose] public section
 
 open Filter Function Submodule
 open scoped Topology InnerProductSpace

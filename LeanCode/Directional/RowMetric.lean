@@ -1,4 +1,8 @@
-import LeanCode.Directional.RowReference
+module
+
+public import LeanCode.Directional.RowReference
+
+@[expose] public section
 
 open Filter Function MeasureTheory Submodule Matrix
 open scoped ENNReal BigOperators ComplexConjugate InnerProductSpace MatrixOrder ComplexOrder
@@ -10,7 +14,7 @@ noncomputable section
 variable {ι : Type*} [Fintype ι]
 variable {ρ : Measure (Base ι)} [IsProbabilityMeasure ρ] (D : DirectionalInput ρ)
 
-private def liftRow {L : ℕ} (μ : Measure (RowPoint ι L)) [IsFiniteMeasure μ]
+def liftRow {L : ℕ} (μ : Measure (RowPoint ι L)) [IsFiniteMeasure μ]
     (i : Fin (D.d + L)) : Lp ℂ 2 μ :=
   lift₂ μ (D.rawRow i) (D.measurable_rawRow i) 1 (fun z => (D.norm_rawRow i z).le)
 

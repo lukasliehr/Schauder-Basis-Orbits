@@ -1,5 +1,9 @@
-import LeanCode.Measure.Information
-import LeanCode.Construction.Iteration
+module
+
+public import LeanCode.Measure.Information
+public import LeanCode.Construction.Iteration
+
+@[expose] public section
 
 open ContinuousLinearMap Submodule
 open scoped InnerProductSpace ComplexOrder MatrixOrder
@@ -17,7 +21,7 @@ theorem product_prefix_arithmetic {u : ℝ} (hu : 0 < u) :
   rw [mul_pow, Real.sq_sqrt h₁, Real.sq_sqrt h₂]
   nlinarith [sq_nonneg u]
 
-private def angleLimit (K τ : ℝ) : ℝ :=
+def angleLimit (K τ : ℝ) : ℝ :=
   let R := (1 + τ / K) ^ 2
   (R - 1) / (R + 1)
 

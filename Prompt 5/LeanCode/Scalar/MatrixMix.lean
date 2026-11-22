@@ -1,4 +1,8 @@
-import LeanCode.Finite.Matrix
+module
+
+public import LeanCode.Finite.Matrix
+
+@[expose] public section
 
 open Matrix
 open scoped MatrixOrder ComplexOrder

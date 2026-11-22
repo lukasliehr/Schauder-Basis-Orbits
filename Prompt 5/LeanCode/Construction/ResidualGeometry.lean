@@ -1,6 +1,10 @@
-import LeanCode.Construction.Residual
-import LeanCode.Measure.Information
-import LeanCode.Finite.BlockPrefixes
+module
+
+public import LeanCode.Construction.Residual
+public import LeanCode.Measure.Information
+public import LeanCode.Finite.BlockPrefixes
+
+@[expose] public section
 
 open MeasureTheory ContinuousLinearMap InnerProductSpace
 open scoped InnerProductSpace ComplexConjugate ComplexOrder
@@ -77,7 +81,7 @@ private theorem equicorrelated_synthGram (v : Fin N → E) {a : ℝ}
   rw [hs]
   ring
 
-private def equicorrelationEigenvalue (N : ℕ) (a : ℝ) : ℝ := 1 + ((N : ℝ) - 1) * a ^ 2
+def equicorrelationEigenvalue (N : ℕ) (a : ℝ) : ℝ := 1 + ((N : ℝ) - 1) * a ^ 2
 
 theorem norm_residualInformation_le (u : ℝ) (hu : 0 ≤ u) (v : Fin N → E)
     {a : ℝ} (ha : 0 ≤ a) (ha1 : a ≤ 1) (hv : ∀ i, ‖v i‖ = 1)

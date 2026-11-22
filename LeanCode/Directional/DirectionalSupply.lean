@@ -1,6 +1,10 @@
-import LeanCode.Directional.SeedChoice
-import LeanCode.Directional.AmplifiedCopies
-import LeanCode.Scalar.Supply
+module
+
+public import LeanCode.Directional.SeedChoice
+public import LeanCode.Directional.AmplifiedCopies
+public import LeanCode.Scalar.Supply
+
+@[expose] public section
 
 open Filter MeasureTheory
 open scoped Topology ENNReal

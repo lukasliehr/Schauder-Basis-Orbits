@@ -1,5 +1,9 @@
-import LeanCode.Construction.Iteration
-import LeanCode.Fourier.Graph
+module
+
+public import LeanCode.Construction.Iteration
+public import LeanCode.Fourier.Graph
+
+@[expose] public section
 
 open Filter Function MeasureTheory Submodule
 open scoped ENNReal Topology ComplexConjugate InnerProductSpace MatrixOrder ComplexOrder BigOperators

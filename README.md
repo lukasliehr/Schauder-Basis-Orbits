@@ -4,7 +4,9 @@ This repository accompanies the paper [A Beginner’s Guide on How to Autoformal
 
 **Theorem.** A strongly continuous one-parameter group of unitary operators on a separable infinite-dimensional complex Hilbert space has simple continuous spectrum if and only if there are $g \in H$ and pairwise distinct $t_n \in \mathbb R$ such that $(U_{t_n}g)_n$ is a Schauder basis of $H$.
 
-`MainResult` is the Lean formulation of the main theorem in [paper.tex](paper.tex). The following declaration is from [Showcase.lean](Showcase.lean).
+Here a vector $v$ is cyclic if the linear span of $\{U_t v : t \in \mathbb R\}$ is dense in $H$, a common eigenvector is a nonzero vector $w$ with $U_t w \in \mathbb C w$ for every $t$, and simple continuous spectrum means that $U$ has a cyclic vector and no common eigenvector.
+
+`MainResult` is the Lean formulation of the main theorem in [paper.tex](paper.tex). The following declaration is from [Solution.lean](Solution.lean).
 
 ```lean
 variable {H : Type*} [ComplexHilbertSpace H] (U : ℝ → UnitaryOperator H)
@@ -16,6 +18,35 @@ theorem MainResult
   exact SchauderBasisOrbits.mainResult U hH hU
 ```
 
-Each `Prompt X` folder is a snapshot of the project after prompt X. `PROMPT.md` records the instructions and `RESULT.md` describes the outcome.
-
 `MainResult` compiles. `#print axioms MainResult` reports exactly `propext`, `Classical.choice`, and `Quot.sound`, Lean’s three standard axioms.
+
+## The branch `palomar`
+
+This branch is the version of the project for the [Palomar registry](https://palomar-registry.org/). The branch `main` contains the project as it was produced.
+
+- `Challenge.lean` states the theorem as `MainResult`, together with the five definitions it uses. It imports only Mathlib and its proof is `sorry`. This is the statement to audit.
+- `Solution.lean` repeats the same definitions and statement and proves `MainResult` from the library theorem `SchauderBasisOrbits.mainResult`. It is the file `Showcase.lean` of the branch `main`.
+- `LeanCode/` is the proof library.
+- `comparator.json` tells Comparator to compare `MainResult` in the two files and permits the axioms `propext`, `Quot.sound` and `Classical.choice`.
+- `formalization.yaml` records sources, authorship, automation and review.
+
+Palomar requires every Lean file of a repository to use Lean's module system. On this branch all Lean files, including those in the `Prompt X` folders, are therefore ported. The port adds the module header to each file, makes 34 private declarations public and writes out two inferred arguments. No statement was changed.
+
+## Source and scope
+
+Both implications of the theorem are proved. The proof relies on Mathlib and on no other dependency, and it contains no `sorry` and no additional axiom. The differences in convention between the manuscript and the Lean statement are listed under `fidelity` in `formalization.yaml` and in the module documentation of `Challenge.lean`.
+
+## Production
+
+The formalization was produced by the workflow described in the paper above. Each `Prompt X` folder is a snapshot of the project after prompt X. `PROMPT.md` records the instructions and `RESULT.md` describes the outcome. The statement in `Challenge.lean` was fixed before any proof was written. The `Showcase.lean` files in the folders `Prompt 1` to `Prompt 4` are this statement before its proof and therefore end in `sorry`.
+
+## Building
+
+```
+lake exe cache get
+lake build
+```
+
+## Licence
+
+This branch is released under the Apache License 2.0, see [LICENSE](LICENSE).

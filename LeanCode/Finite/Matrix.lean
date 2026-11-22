@@ -1,4 +1,8 @@
-import Mathlib
+module
+
+public import Mathlib
+
+@[expose] public section
 
 /-! Euclidean matrix norms and quadratic forms for the finite Gram estimates. -/
 

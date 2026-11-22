@@ -1,8 +1,12 @@
-import LeanCode.Basis.Criterion
-import LeanCode.Construction.LineFamilies
-import LeanCode.Construction.LimitWeights
-import LeanCode.Construction.Schedule
-import Mathlib
+module
+
+public import LeanCode.Basis.Criterion
+public import LeanCode.Construction.LineFamilies
+public import LeanCode.Construction.LimitWeights
+public import LeanCode.Construction.Schedule
+public import Mathlib
+
+@[expose] public section
 
 open Filter Function MeasureTheory Submodule
 open scoped ENNReal Topology BigOperators

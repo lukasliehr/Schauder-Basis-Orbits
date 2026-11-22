@@ -1,0 +1,148 @@
+# yaml-language-server: $schema=https://raw.githubusercontent.com/mathlib-initiative/formalization.yaml/main/schema/formalization.schema.json
+# formalization.yaml v0.4 for the Palomar submission of this project.
+version: "v0.4"
+
+project:
+  name: "Schauder bases in unitary orbits"
+  description: >-
+    A Lean 4 formalization of the following theorem: a strongly continuous
+    one-parameter group of unitary operators on a separable infinite-dimensional
+    complex Hilbert space has simple continuous spectrum if and only if one of
+    its orbits contains a Schauder basis, that is, there are a vector g and
+    pairwise distinct real numbers t_n such that (U_{t_n} g) is a Schauder basis.
+  # Humans only.
+  authors:
+    - "Lukas Liehr"
+    - "Mitchell A. Taylor"
+  # Must match the SPDX identifier of the LICENSE file at the repository root.
+  license: "Apache-2.0"
+  responsible_maintainers:
+    - "Lukas Liehr"
+
+classification:
+  arxiv: ["math.FA", "math.SP"]
+  msc2020: ["46B15", "47D03", "47A10"]
+
+sources:
+  # Result origin. As written, the result is source-based: the Lean development
+  # formalizes Theorem thm:main of the manuscript in this repository. If the
+  # theorem is first presented by this project, replace the first entry by
+  #   - title: "..."
+  #     type: original-proof
+  #     relationship: other
+  # and change every other relationship to background or other.
+  - title: "Schauder bases in unitary orbits"
+    type: "paper"
+    location: "paper.tex and refactored.tex at the repository root of the submitted commit"
+    relationship: "formalizes"
+    note: >-
+      Manuscript contained in this repository, dated November 18, 2026, with no
+      author line. refactored.tex is a modular version of the same proof which
+      was written for the formalization, and BLUEPRINT.md is the blueprint
+      derived from it. The Lean statement MainResult corresponds to Theorem
+      thm:main.
+    license: "Apache-2.0"
+  - title: "Structured coordinate systems in L^p(R)"
+    authors:
+      - "D. Freeman"
+      - "L. Liehr"
+      - "M. A. Taylor"
+    id: "arXiv:2610.18709v2"
+    type: "paper"
+    location: "https://arxiv.org/abs/2610.18709v2"
+    relationship: "background"
+    note: >-
+      The only reference of the manuscript. According to Prompt 1/RESULT.md the
+      finite scalar and directional constructions develop the method of this
+      paper, and none of its propositions is used as an unproved input.
+    license: "unknown"
+  - title: "A Beginner's Guide on How to Autoformalize Mathematics in Lean"
+    authors:
+      - "Lukas Liehr"
+      - "David Muñoz-Lahoz"
+      - "Mitchell A. Taylor"
+    type: "paper"
+    location: "https://functionalanalysismadrid.com/lean_guide.pdf"
+    relationship: "other"
+    note: >-
+      Describes the workflow which produced this formalization. This repository
+      is its supplementary material.
+    license: "unknown"
+
+related_formalizations: []
+
+status:
+  scope: >-
+    The full statement of Theorem thm:main of the manuscript is formalized and
+    proved in both directions. Nothing is assumed beyond Mathlib. In particular
+    the spectral representation of a cyclic unitary group and the construction
+    of weighted exponential bases are proved inside the project.
+  sorry_count: 0
+  sorry_in_definitions: 0
+  axioms: []
+
+automation:
+  methods:
+    - method: "agent"
+      tool_setup: >-
+        Five prompts, recorded verbatim in Prompt 1/PROMPT.md to
+        Prompt 5/PROMPT.md, each followed by a snapshot of the project and a
+        RESULT.md. Prompt 1 makes the manuscript self-contained relative to
+        Mathlib, Prompt 2 audits it for formalization (AUDIT.md), Prompt 3
+        refactors it (refactored.tex), Prompt 4 writes the blueprint
+        (BLUEPRINT.md) and Prompt 5 carries out the Lean formalization with up
+        to three subagents.
+      prompting_notes: "The prompts are recorded verbatim in the Prompt folders."
+    - method: "agent"
+      models: ["Claude Fable 5.2"]
+      framework: "Claude Code"
+      tool_setup: >-
+        Preparation of the Palomar submission after the proof was complete:
+        port of all Lean files to the module system (module header, public
+        imports, exposed public sections), the Challenge and Solution files,
+        comparator.json and a draft of this file. The port made 34 of the 198
+        private declarations public because public definitions use them, and
+        wrote out two inferred arguments explicitly (in
+        LeanCode/Finite/ColumnMatrix.lean and
+        LeanCode/Directional/SelectedMeans.lean). No statement was changed.
+      cost:
+        wall_time: "one session"
+        spend_usd: "subscription-based"
+        hardware: "local machine"
+      prompting_notes: "n/a"
+  notes: >-
+    The statement, that is, the five definitions and the theorem MainResult,
+    was supplied by the authors in Showcase.lean before any proof was written.
+    Prompt 5/RESULT.md records that the proof step changed Showcase.lean only
+    by adding one import and replacing sorry by the proof. On this branch
+    Solution.lean is that file and Challenge.lean is its statement with sorry.
+
+fidelity:
+  divergences: >-
+    No mathematical divergence from Theorem thm:main is known. The formal
+    statement makes three conventions explicit. First, SchauderBasis is Mathlib's
+    notion, which packages basis vectors, continuous coordinate functionals
+    biorthogonal to them and norm convergence of the partial sums, whereas the
+    manuscript defines a Schauder basis by unique norm-convergent expansions.
+    The two notions agree in Banach spaces. Second, the sequence t_n is indexed
+    from n = 0 instead of n = 1. Third, the group law is stated pointwise as
+    U (s + t) x = U s (U t x), which implies U 0 = 1 because every U t is a
+    bijection.
+
+review:
+  status: "agent-reviewed"
+
+alignment:
+  namespace: "SchauderBasisOrbits"
+  statements:
+    - source: "paper.tex, Theorem thm:main (Section 1)"
+      lean: "MainResult"
+      module: "Challenge"
+      status: "proved"
+      note: >-
+        Stated in Challenge.lean and proved in Solution.lean by the library
+        theorem SchauderBasisOrbits.mainResult from LeanCode/Main.lean. The
+        compared declaration and its five definitions live in the root
+        namespace. The proof library uses the namespace SchauderBasisOrbits.
+
+acknowledgements: "Mathlib and the Lean community."

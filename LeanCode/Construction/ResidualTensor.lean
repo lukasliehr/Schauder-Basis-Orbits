@@ -1,5 +1,9 @@
-import LeanCode.Construction.ResidualCopies
-import LeanCode.Finite.BlockPrefixes
+module
+
+public import LeanCode.Construction.ResidualCopies
+public import LeanCode.Finite.BlockPrefixes
+
+@[expose] public section
 
 open MeasureTheory Filter Complex
 open scoped InnerProductSpace BigOperators ComplexConjugate

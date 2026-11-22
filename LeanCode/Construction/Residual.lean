@@ -1,4 +1,8 @@
-import LeanCode.Construction.LineFamilies
+module
+
+public import LeanCode.Construction.LineFamilies
+
+@[expose] public section
 
 open MeasureTheory Set Submodule
 open scoped InnerProductSpace ComplexOrder MatrixOrder

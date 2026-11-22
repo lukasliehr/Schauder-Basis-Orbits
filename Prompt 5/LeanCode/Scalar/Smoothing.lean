@@ -1,6 +1,10 @@
-import LeanCode.Scalar.Fejer
-import LeanCode.Scalar.MatrixMix
-import LeanCode.Scalar.Prefix
+module
+
+public import LeanCode.Scalar.Fejer
+public import LeanCode.Scalar.MatrixMix
+public import LeanCode.Scalar.Prefix
+
+@[expose] public section
 
 open Filter MeasureTheory Complex Matrix
 open scoped ComplexConjugate ComplexOrder MatrixOrder InnerProductSpace Topology ENNReal
@@ -21,7 +25,7 @@ local instance smoothingCircleNegInvariant : (volume : Measure UnitAddCircle).Is
 
 variable {r n : ℕ} (D : Data r n) (N : ℕ)
 
-private abbrev T := UnitAddTorus (Fin r)
+abbrev T := UnitAddTorus (Fin r)
 
 private lemma integral_sub_arg {ι E : Type*} [Fintype ι] [NormedAddCommGroup E] [NormedSpace ℝ E]
     (g : UnitAddTorus ι → E) (x : UnitAddTorus ι) :
@@ -91,7 +95,7 @@ lemma smoothWeight_even (x : T (r := r)) : smoothWeight D N (-x) = smoothWeight 
   have h (y : T (r := r)) : -x - -y = -(x - y) := by abel
   simp only [D.even_w, h, fejerTorus_even]
 
-private noncomputable def smoothPoly : TorusPoly (Fin r) :=
+noncomputable def smoothPoly : TorusPoly (Fin r) :=
   let p := fejerTorusPoly (Fin r) N
   ∑ k ∈ p.coeff.support, AddMonoidAlgebra.single k
     (p.coeff k * ∫ y, (D.w y : ℂ) * conj (torusChar k y))
@@ -252,7 +256,7 @@ lemma smoothData_complexGram_tendsto (i j : Fin (n + 1)) :
   simpa using tendsto_const_nhds.mul hK
 
 
-private noncomputable def phaseCoeffs (z : T (r := r)) (c : Fin (n + 1) → ℂ) :
+noncomputable def phaseCoeffs (z : T (r := r)) (c : Fin (n + 1) → ℂ) :
     Fin (n + 1) → ℂ := fun i => torusChar (D.augMode i) z * c i
 
 private lemma phaseCoeffs_trunc (z : T (r := r)) (c : Fin (n + 1) → ℂ) (j : ℕ) :

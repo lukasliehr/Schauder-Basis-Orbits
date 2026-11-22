@@ -1,12 +1,16 @@
-import LeanCode.Directional.RowMetric
-import LeanCode.Directional.Amplification
-import LeanCode.Finite.ActivatedRowCut
-import LeanCode.Finite.PartialColumn
-import LeanCode.Finite.ColumnCuts
-import LeanCode.Directional.RowReference
-import LeanCode.Directional.SelectedCentering
-import LeanCode.Finite.ColumnMatrix
-import LeanCode.Scalar.SupplyContract
+module
+
+public import LeanCode.Directional.RowMetric
+public import LeanCode.Directional.Amplification
+public import LeanCode.Finite.ActivatedRowCut
+public import LeanCode.Finite.PartialColumn
+public import LeanCode.Finite.ColumnCuts
+public import LeanCode.Directional.RowReference
+public import LeanCode.Directional.SelectedCentering
+public import LeanCode.Finite.ColumnMatrix
+public import LeanCode.Scalar.SupplyContract
+
+@[expose] public section
 
 open Filter Function MeasureTheory Submodule Matrix
 open scoped ENNReal BigOperators ComplexConjugate InnerProductSpace MatrixOrder ComplexOrder

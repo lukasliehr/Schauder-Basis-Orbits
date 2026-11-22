@@ -1,4 +1,8 @@
-import LeanCode.Finite.Families
+module
+
+public import LeanCode.Finite.Families
+
+@[expose] public section
 
 open Matrix
 open scoped BigOperators ComplexOrder MatrixOrder Matrix.Norms.L2Operator Kronecker
@@ -44,6 +48,7 @@ theorem posDef_blockDiagonal_of {G : κ → Matrix ι ι 𝕜} (h : ∀ j, (G j)
   have hne : (fun i' ↦ x (i',j)) ≠ 0 := fun h ↦ hij (congrFun h i)
   rw [qform_blockDiagonal_component]
   exact (qform_pos (h j) hne).trans_le (Finset.single_le_sum
+    (f := fun j' ↦ qform (G j') fun i' ↦ x (i', j'))
     (fun j' _ ↦ qform_nonneg (h j').posSemidef _) (Finset.mem_univ j))
 
 omit [DecidableEq ι] in

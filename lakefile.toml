@@ -1,6 +1,6 @@
 name = "schauderBasisOrbits"
 version = "0.1.0"
-defaultTargets = ["Showcase"]
+defaultTargets = ["LeanCode", "Challenge", "Solution"]
 
 [[require]]
 name = "mathlib"
@@ -12,4 +12,9 @@ name = "LeanCode"
 globs = ["LeanCode.+"]
 
 [[lean_lib]]
-name = "Showcase"
+name = "Challenge"
+roots = ["Challenge"]
+
+[[lean_lib]]
+name = "Solution"
+roots = ["Solution"]

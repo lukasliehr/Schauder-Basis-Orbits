@@ -1,6 +1,10 @@
-import LeanCode.Directional.AmplifiedOutput
-import LeanCode.Measure.FiberTransport
-import LeanCode.Measure.PiSynthesis
+module
+
+public import LeanCode.Directional.AmplifiedOutput
+public import LeanCode.Measure.FiberTransport
+public import LeanCode.Measure.PiSynthesis
+
+@[expose] public section
 
 open Function MeasureTheory Submodule
 open scoped BigOperators ENNReal ComplexOrder
@@ -12,7 +16,7 @@ noncomputable section
 variable {ι : Type*} [Fintype ι] {ρ : Measure (ℝ × UnitAddTorus ι)} [IsFiniteMeasure ρ]
 variable {D : DirectionalInput ρ} {Ks ε : ℝ} (P : SelectedPacket D Ks ε)
 
-private lemma copySize_eq (N n : ℕ) : (∑ _ : Fin N, n) = N * n := by
+lemma copySize_eq (N n : ℕ) : (∑ _ : Fin N, n) = N * n := by
   simp [nsmul_eq_mul]
 
 private lemma finCongr_finSigmaFinEquiv_copySize {N n : ℕ} (b : Fin N) (i : Fin n) :
@@ -23,16 +27,16 @@ private lemma finCongr_finSigmaFinEquiv_copySize {N n : ℕ} (b : Fin N) (i : Fi
   change (∑ _ : Fin b.val, n) + i.val = i.val + n * b.val
   simp [nsmul_eq_mul, add_comm, mul_comm]
 
-private def selectedRawFamily :
+def selectedRawFamily :
     FiberFamily (ℝ × UnitAddTorus ι) (UnitAddTorus (Fin P.r)) P.n where
   value i := directionalRaw (P.freq i)
   measurable i := measurable_directionalRaw _
   norm_le i p := (norm_directionalRaw _ p).le
 
-private def copiedFreq (N : ℕ) (i : Fin (∑ _ : Fin N, P.n)) : MixedFreq (ι ⊕ Fin (N * P.r)) :=
+def copiedFreq (N : ℕ) (i : Fin (∑ _ : Fin N, P.n)) : MixedFreq (ι ⊕ Fin (N * P.r)) :=
   directionalCopyFrequencies N P.toDirectionalFamily (finCongr (copySize_eq N P.n) i)
 
-private theorem copiedFreq_raw_eq (N : ℕ) (i : Fin (∑ _ : Fin N, P.n))
+theorem copiedFreq_raw_eq (N : ℕ) (i : Fin (∑ _ : Fin N, P.n))
     (p : (ℝ × UnitAddTorus ι) × UnitAddTorus (Fin (N * P.r))) :
     directionalRaw (copiedFreq P N i) p =
       (FiberFamily.combine (fun _ : Fin N => selectedRawFamily P)).value i

@@ -1,6 +1,10 @@
-import LeanCode.Measure.Weights
-import LeanCode.Finite.Families
-import Mathlib
+module
+
+public import LeanCode.Measure.Weights
+public import LeanCode.Finite.Families
+public import Mathlib
+
+@[expose] public section
 
 open MeasureTheory Complex Matrix
 open scoped ENNReal ComplexConjugate ComplexOrder MatrixOrder InnerProductSpace

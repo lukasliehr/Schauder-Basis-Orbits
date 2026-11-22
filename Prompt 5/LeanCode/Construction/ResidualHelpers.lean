@@ -1,4 +1,8 @@
-import LeanCode.Construction.ResidualTensor
+module
+
+public import LeanCode.Construction.ResidualTensor
+
+@[expose] public section
 
 open Filter MeasureTheory Complex
 open scoped BigOperators InnerProductSpace ComplexConjugate

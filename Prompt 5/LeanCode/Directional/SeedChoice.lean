@@ -1,6 +1,10 @@
-import LeanCode.Directional.Amplification
-import LeanCode.Directional.Response
-import LeanCode.Scalar.SupplyContract
+module
+
+public import LeanCode.Directional.Amplification
+public import LeanCode.Directional.Response
+public import LeanCode.Scalar.SupplyContract
+
+@[expose] public section
 
 open Filter
 open scoped Topology MatrixOrder

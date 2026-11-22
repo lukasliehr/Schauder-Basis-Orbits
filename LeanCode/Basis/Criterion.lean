@@ -1,9 +1,13 @@
-import Mathlib.Analysis.Normed.Operator.Extend
-import Mathlib.Analysis.InnerProductSpace.Dual
-import Mathlib.Analysis.InnerProductSpace.Projection.Submodule
-import Mathlib.Analysis.Normed.Module.Bases
-import Mathlib.Tactic
-import LeanCode.Finite.Families
+module
+
+public import Mathlib.Analysis.Normed.Operator.Extend
+public import Mathlib.Analysis.InnerProductSpace.Dual
+public import Mathlib.Analysis.InnerProductSpace.Projection.Submodule
+public import Mathlib.Analysis.Normed.Module.Bases
+public import Mathlib.Tactic
+public import LeanCode.Finite.Families
+
+@[expose] public section
 
 open Filter Submodule
 open scoped Topology InnerProductSpace

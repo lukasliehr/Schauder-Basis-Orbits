@@ -1,6 +1,10 @@
-import LeanCode.Fourier.Characters
-import Mathlib.MeasureTheory.Function.L2Space
-import Mathlib.MeasureTheory.Measure.WithDensity
+module
+
+public import LeanCode.Fourier.Characters
+public import Mathlib.MeasureTheory.Function.L2Space
+public import Mathlib.MeasureTheory.Measure.WithDensity
+
+@[expose] public section
 
 open Filter MeasureTheory
 open scoped ENNReal InnerProductSpace ComplexConjugate

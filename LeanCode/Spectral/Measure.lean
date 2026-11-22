@@ -1,5 +1,9 @@
-import LeanCode.Spectral.DensityMass
-import Mathlib.MeasureTheory.Measure.LevyConvergence
+module
+
+public import LeanCode.Spectral.DensityMass
+public import Mathlib.MeasureTheory.Measure.LevyConvergence
+
+@[expose] public section
 
 open MeasureTheory Set Filter
 open scoped Topology InnerProductSpace

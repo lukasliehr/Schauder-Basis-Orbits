@@ -1,5 +1,9 @@
-import LeanCode.Spectral.Approximation
-import Mathlib.Analysis.Fourier.Inversion
+module
+
+public import LeanCode.Spectral.Approximation
+public import Mathlib.Analysis.Fourier.Inversion
+
+@[expose] public section
 
 open Complex MeasureTheory Set Filter
 open scoped FourierTransform ENNReal InnerProductSpace Topology

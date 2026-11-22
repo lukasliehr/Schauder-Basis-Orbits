@@ -1,5 +1,9 @@
-import LeanCode.Construction.ResidualHelpers
-import LeanCode.Scalar.SupplyContract
+module
+
+public import LeanCode.Construction.ResidualHelpers
+public import LeanCode.Scalar.SupplyContract
+
+@[expose] public section
 
 open Matrix MeasureTheory Filter ContinuousLinearMap Complex
 open scoped BigOperators InnerProductSpace ComplexConjugate

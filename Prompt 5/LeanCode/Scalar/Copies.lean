@@ -1,4 +1,8 @@
-import LeanCode.Scalar.Prefix
+module
+
+public import LeanCode.Scalar.Prefix
+
+@[expose] public section
 
 open MeasureTheory Matrix Complex
 open scoped ENNReal ComplexConjugate ComplexOrder MatrixOrder

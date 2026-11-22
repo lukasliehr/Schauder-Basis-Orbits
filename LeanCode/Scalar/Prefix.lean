@@ -1,4 +1,8 @@
-import LeanCode.Scalar.Data
+module
+
+public import LeanCode.Scalar.Data
+
+@[expose] public section
 
 open Matrix
 open scoped MatrixOrder ComplexOrder

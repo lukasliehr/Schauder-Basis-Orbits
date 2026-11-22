@@ -1,5 +1,9 @@
-import LeanCode.Measure.Weights
-import Mathlib.MeasureTheory.Integral.Prod
+module
+
+public import LeanCode.Measure.Weights
+public import Mathlib.MeasureTheory.Integral.Prod
+
+@[expose] public section
 
 open Filter MeasureTheory Set
 open scoped ENNReal InnerProductSpace ComplexConjugate

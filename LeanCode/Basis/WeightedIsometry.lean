@@ -1,6 +1,10 @@
-import LeanCode.Measure.Weights
-import Mathlib.Analysis.InnerProductSpace.LinearMap
-import Mathlib.Tactic
+module
+
+public import LeanCode.Measure.Weights
+public import Mathlib.Analysis.InnerProductSpace.LinearMap
+public import Mathlib.Tactic
+
+@[expose] public section
 
 open MeasureTheory Filter
 open scoped ENNReal InnerProductSpace
@@ -26,7 +30,7 @@ theorem memLp_sqrt_weighted_iff (hw : Measurable w) (hp : ∀ᵐ x ∂μ, 0 < w 
   rw [norm_smul, Real.norm_eq_abs, abs_of_nonneg (Real.sqrt_nonneg _), mul_pow,
     Real.sq_sqrt hx.le, ENNReal.toReal_ofReal hx.le, mul_comm]
 
-private theorem weighted_mem_sqrt (hw : Measurable w) (hp : ∀ᵐ x ∂μ, 0 < w x)
+theorem weighted_mem_sqrt (hw : Measurable w) (hp : ∀ᵐ x ∂μ, 0 < w x)
     (f : Lp ℂ 2 (weightedMeasure μ w)) :
     MemLp (fun x => Real.sqrt (w x) • f x) 2 μ := by
   have hf : AEStronglyMeasurable (⇑f) μ := by
@@ -34,7 +38,7 @@ private theorem weighted_mem_sqrt (hw : Measurable w) (hp : ∀ᵐ x ∂μ, 0 < 
     exact ⟨g, hg, by rw [EventuallyEq, ← ae_weightedMeasure μ hw hp]; exact hfg⟩
   exact (memLp_sqrt_weighted_iff hw hp hf).mpr (Lp.memLp f)
 
-private noncomputable def weightedToBaseFun (hw : Measurable w) (hp : ∀ᵐ x ∂μ, 0 < w x)
+noncomputable def weightedToBaseFun (hw : Measurable w) (hp : ∀ᵐ x ∂μ, 0 < w x)
     (f : Lp ℂ 2 (weightedMeasure μ w)) : Lp ℂ 2 μ :=
   (weighted_mem_sqrt hw hp f).toLp _
 
@@ -47,7 +51,7 @@ private theorem eventually_of_weighted (hw : Measurable w) (hp : ∀ᵐ x ∂μ,
     {p : α → Prop} (h : ∀ᵐ x ∂weightedMeasure μ w, p x) : ∀ᵐ x ∂μ, p x := by
   rwa [ae_weightedMeasure μ hw hp] at h
 
-private noncomputable def weightedToBaseLinear (hw : Measurable w) (hp : ∀ᵐ x ∂μ, 0 < w x) :
+noncomputable def weightedToBaseLinear (hw : Measurable w) (hp : ∀ᵐ x ∂μ, 0 < w x) :
     Lp ℂ 2 (weightedMeasure μ w) →ₗ[ℂ] Lp ℂ 2 μ where
   toFun := weightedToBaseFun hw hp
   map_add' f g := by
@@ -70,7 +74,7 @@ private noncomputable def weightedToBaseLinear (hw : Measurable w) (hp : ∀ᵐ 
     change Real.sqrt (w x) • (c • f x) = c • weightedToBaseFun hw hp f x
     rw [h₂, smul_comm]
 
-private theorem weightedToBase_inner (hw : Measurable w) (hp : ∀ᵐ x ∂μ, 0 < w x)
+theorem weightedToBase_inner (hw : Measurable w) (hp : ∀ᵐ x ∂μ, 0 < w x)
     (f g : Lp ℂ 2 (weightedMeasure μ w)) :
     ⟪weightedToBaseLinear hw hp f, weightedToBaseLinear hw hp g⟫_ℂ = ⟪f, g⟫_ℂ := by
   change ⟪weightedToBaseFun hw hp f, weightedToBaseFun hw hp g⟫_ℂ = _
@@ -84,7 +88,7 @@ private theorem weightedToBase_inner (hw : Measurable w) (hp : ∀ᵐ x ∂μ, 0
       RCLike.real_smul_eq_coe_smul (K := ℂ) _ (g x), inner_smul_real_left,
       inner_smul_real_right, smul_smul, ← pow_two, Real.sq_sqrt hx.le]
 
-private theorem weightedToBase_surjective (hw : Measurable w) (hp : ∀ᵐ x ∂μ, 0 < w x) :
+theorem weightedToBase_surjective (hw : Measurable w) (hp : ∀ᵐ x ∂μ, 0 < w x) :
     Function.Surjective (weightedToBaseFun hw hp) := by
   intro g
   let f : α → ℂ := fun x => (Real.sqrt (w x))⁻¹ • g x

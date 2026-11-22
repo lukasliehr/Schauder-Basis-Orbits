@@ -1,4 +1,8 @@
-import LeanCode.Directional.SelectedWeight
+module
+
+public import LeanCode.Directional.SelectedWeight
+
+@[expose] public section
 
 open Filter Function MeasureTheory
 open scoped ENNReal BigOperators ComplexConjugate InnerProductSpace

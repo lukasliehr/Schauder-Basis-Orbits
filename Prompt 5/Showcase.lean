@@ -1,5 +1,9 @@
-import Mathlib
-import LeanCode.Main
+module
+
+public import Mathlib
+public import LeanCode.Main
+
+@[expose] public section
 
 open Function Submodule TopologicalSpace
 

@@ -1,5 +1,9 @@
-import LeanCode.Construction.LineStep
-import LeanCode.Measure.Products
+module
+
+public import LeanCode.Construction.LineStep
+public import LeanCode.Measure.Products
+
+@[expose] public section
 
 open Filter MeasureTheory
 open scoped ENNReal InnerProductSpace MatrixOrder ComplexOrder
@@ -171,7 +175,7 @@ def NormalizedProductExtensionSupply (ρ : Measure ℝ) [IsFiniteMeasure ρ] : P
     a ≠ [] → a.Nodup → q ∉ a → 0 < δ → 0 < τ →
     HPrefix (𝕜 := ℂ) (realFamily ρ a) K → Nonempty (NormalizedProductLineData ρ u a q K δ τ)
 
-private theorem gram_productFamily_scale (ν : Measure (ℝ × UnitAddTorus ι))
+theorem gram_productFamily_scale (ν : Measure (ℝ × UnitAddTorus ι))
     [IsFiniteMeasure ν] (ν' : Measure (ℝ × UnitAddTorus ι)) [IsFiniteMeasure ν']
     {s : ℝ} (hs : 0 ≤ s) (hν : ν' = ENNReal.ofReal s • ν)
     {n : ℕ} (a : Fin n → MixedFreq ι) :

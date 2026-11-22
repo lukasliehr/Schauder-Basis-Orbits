@@ -1,5 +1,9 @@
-import LeanCode.Directional.Response
-import LeanCode.Measure.Information
+module
+
+public import LeanCode.Directional.Response
+public import LeanCode.Measure.Information
+
+@[expose] public section
 
 open Matrix Submodule ContinuousLinearMap
 open scoped InnerProductSpace ComplexOrder MatrixOrder ComplexConjugate BigOperators

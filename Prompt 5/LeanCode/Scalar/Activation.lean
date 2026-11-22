@@ -1,5 +1,9 @@
-import LeanCode.Scalar.Data
-import LeanCode.Scalar.Budgets
+module
+
+public import LeanCode.Scalar.Data
+public import LeanCode.Scalar.Budgets
+
+@[expose] public section
 
 open MeasureTheory Matrix Complex
 open scoped ENNReal ComplexConjugate ComplexOrder MatrixOrder
@@ -8,7 +12,7 @@ namespace SchauderBasisOrbits.Scalar
 
 local notation "𝕋" => UnitAddCircle
 
-private lemma haar_closedBall_eq {p : ℝ} (hp : p ≤ 1) :
+lemma haar_closedBall_eq {p : ℝ} (hp : p ≤ 1) :
     (@AddCircle.haarAddCircle 1 _) (Metric.closedBall 0 (p / 2)) = ENNReal.ofReal p := by
   have h := AddCircle.volume_closedBall (T := 1) (x := 0) (p / 2)
   rw [AddCircle.volume_eq_smul_haarAddCircle] at h

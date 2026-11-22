@@ -1,4 +1,8 @@
-import LeanCode.Directional.RowMoments
+module
+
+public import LeanCode.Directional.RowMoments
+
+@[expose] public section
 
 open Filter Function MeasureTheory Submodule
 open scoped ENNReal BigOperators ComplexConjugate InnerProductSpace
@@ -55,7 +59,7 @@ theorem selected_mean_rawRow {L r n : ℕ} {m : ℝ} (hm : 0 < m)
     (fun y => ⟨S.w_nonneg y, S.le_one y⟩),
     hZero, mul_zero, zero_add,
     show (∫ y, (U.weight (s, y) : ℂ) * a y ∂torusHaar (Fin L)) =
-      (m : ℂ) * U.mean (D.rawRow i) s from U.integral_weight_eq_mass_mean _ s]
+      (m : ℂ) * U.mean (D.rawRow i) s from U.integral_weight_eq_mass_mean (D.rawRow i) s]
   rfl
 
 theorem selected_mean_base {L r n : ℕ} {m : ℝ} (hm : 0 < m)

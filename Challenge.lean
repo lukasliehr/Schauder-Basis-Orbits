@@ -1,5 +1,27 @@
-import Mathlib
-import LeanCode.Main
+module
+
+public import Mathlib
+
+@[expose] public section
+
+/-!
+# Schauder bases in unitary orbits
+
+This file is the statement of record. It imports only Mathlib and contains five definitions and the theorem `MainResult`, whose proof is supplied in `Solution.lean`.
+
+**Theorem.** A strongly continuous one-parameter group of unitary operators `U = (U t)` on a separable infinite-dimensional complex Hilbert space `H` has simple continuous spectrum if and only if there are `g ∈ H` and pairwise distinct `t n ∈ ℝ` such that `(U (t n) g)` is a Schauder basis of `H`.
+
+A vector `v` is cyclic if the linear span of `{U t v : t ∈ ℝ}` is dense in `H`. A common eigenvector is a nonzero vector `w` such that `U t w ∈ ℂ w` for every `t`. Simple continuous spectrum means that `U` has a cyclic vector and no common eigenvector.
+
+## Reading the formal statement
+
+* A unitary operator is a surjective linear isometry `H ≃ₗᵢ[ℂ] H`.
+* The group law is stated pointwise as `U (s + t) x = U s (U t x)`. Since every `U t` is a bijection, this gives `U 0 = 1`.
+* Strong continuity is continuity of `t ↦ U t x` for every `x`.
+* `SchauderBasis ℂ H` is Mathlib's classical Schauder basis indexed by `ℕ`. It consists of basis vectors, continuous coordinate functionals which are biorthogonal to them, and norm convergence of the partial sums of the expansion of every vector. The expression `b n` is the `n`-th basis vector.
+* The points `t n` are indexed from `n = 0`, and `Injective t` says that they are pairwise distinct.
+* Infinite dimensionality is the hypothesis `¬ FiniteDimensional ℂ H`.
+-/
 
 open Function Submodule TopologicalSpace
 
@@ -34,4 +56,4 @@ theorem MainResult
     [SeparableSpace H] (hH : ¬ FiniteDimensional ℂ H) (hU : IsStronglyContinuousGroup U) :
     HasSimpleContinuousSpectrum U ↔
       ∃ (g : H) (t : ℕ → ℝ), Injective t ∧ ∃ b : SchauderBasis ℂ H, ∀ n, b n = U (t n) g := by
-  exact SchauderBasisOrbits.mainResult U hH hU
+  sorry

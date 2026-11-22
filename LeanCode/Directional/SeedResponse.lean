@@ -1,4 +1,8 @@
-import LeanCode.Directional.RowCoordinates
+module
+
+public import LeanCode.Directional.RowCoordinates
+
+@[expose] public section
 
 open Filter Function MeasureTheory Submodule Matrix
 open scoped ENNReal BigOperators ComplexConjugate InnerProductSpace MatrixOrder ComplexOrder

@@ -1,4 +1,8 @@
-import LeanCode.Directional.SeedChoice
+module
+
+public import LeanCode.Directional.SeedChoice
+
+@[expose] public section
 
 namespace SchauderBasisOrbits.PacketAndSeed
 

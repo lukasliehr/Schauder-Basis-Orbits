@@ -1,7 +1,11 @@
-import LeanCode.Scalar.SupplyContract
-import LeanCode.Scalar.ActivationPrefix
-import LeanCode.Scalar.Smoothing
-import LeanCode.Scalar.Tuning
+module
+
+public import LeanCode.Scalar.SupplyContract
+public import LeanCode.Scalar.ActivationPrefix
+public import LeanCode.Scalar.Smoothing
+public import LeanCode.Scalar.Tuning
+
+@[expose] public section
 
 open Filter Matrix
 open scoped Topology MatrixOrder

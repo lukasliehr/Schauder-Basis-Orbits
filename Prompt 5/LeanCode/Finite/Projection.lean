@@ -1,4 +1,8 @@
-import LeanCode.Finite.Families
+module
+
+public import LeanCode.Finite.Families
+
+@[expose] public section
 
 /-! Norm estimates for oblique prefix projections and joining centered blocks. -/
 

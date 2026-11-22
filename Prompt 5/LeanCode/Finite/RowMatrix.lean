@@ -1,4 +1,8 @@
-import LeanCode.Finite.Projection
+module
+
+public import LeanCode.Finite.Projection
+
+@[expose] public section
 
 /-! Hermitian tests and block estimates for real skew matrices. -/
 

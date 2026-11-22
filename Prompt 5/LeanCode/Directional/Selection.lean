@@ -1,8 +1,12 @@
-import LeanCode.Directional.DirectionalSupply
-import LeanCode.Directional.PacketBounds
-import LeanCode.Directional.SelectedInformation
-import LeanCode.Directional.SelectedPacketAssembly
-import LeanCode.Directional.SelectedPrefixData
+module
+
+public import LeanCode.Directional.DirectionalSupply
+public import LeanCode.Directional.PacketBounds
+public import LeanCode.Directional.SelectedInformation
+public import LeanCode.Directional.SelectedPacketAssembly
+public import LeanCode.Directional.SelectedPrefixData
+
+@[expose] public section
 
 open Filter MeasureTheory
 open scoped ENNReal

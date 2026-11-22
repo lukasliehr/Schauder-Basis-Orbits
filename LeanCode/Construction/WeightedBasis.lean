@@ -1,5 +1,9 @@
-import LeanCode.Construction.Iteration
-import LeanCode.Construction.OrderedLimit
+module
+
+public import LeanCode.Construction.Iteration
+public import LeanCode.Construction.OrderedLimit
+
+@[expose] public section
 
 open Filter Function MeasureTheory Submodule
 open scoped ENNReal Topology BigOperators
@@ -39,7 +43,7 @@ theorem trajectory_unbounded (i : ℕ) : ∃ n, i < (states n).a.length := by
       (steps j).length_lt_if_absent habs
     exact ⟨j + 1, (Nat.succ_le_of_lt (hn.trans_le hpre.length_le)).trans_lt hgrow⟩
 
-private def trajectoryMultipliers (n : ℕ) (x : ℝ) : ℝ := (steps n).V x
+def trajectoryMultipliers (n : ℕ) (x : ℝ) : ℝ := (steps n).V x
 
 private theorem trajectory_weight_eq (n : ℕ) (x : ℝ) :
     (states n).v x = stageWeight (trajectoryMultipliers hε supply) n x := by

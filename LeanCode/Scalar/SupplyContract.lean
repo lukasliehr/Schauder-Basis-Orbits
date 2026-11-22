@@ -1,5 +1,9 @@
-import LeanCode.Scalar.Data
-import LeanCode.Scalar.Budgets
+module
+
+public import LeanCode.Scalar.Data
+public import LeanCode.Scalar.Budgets
+
+@[expose] public section
 
 open Matrix
 open scoped MatrixOrder

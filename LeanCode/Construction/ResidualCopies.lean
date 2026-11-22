@@ -1,7 +1,11 @@
-import LeanCode.Construction.ResidualGeometry
-import LeanCode.Measure.PiProducts
-import LeanCode.Fourier.Coordinates
-import LeanCode.Scalar.Data
+module
+
+public import LeanCode.Construction.ResidualGeometry
+public import LeanCode.Measure.PiProducts
+public import LeanCode.Fourier.Coordinates
+public import LeanCode.Scalar.Data
+
+@[expose] public section
 
 open MeasureTheory Filter Matrix
 open scoped BigOperators InnerProductSpace ComplexConjugate

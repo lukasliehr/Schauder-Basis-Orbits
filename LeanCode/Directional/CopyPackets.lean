@@ -1,7 +1,11 @@
-import LeanCode.Directional.SupplyContract
-import LeanCode.Fourier.Coordinates
-import LeanCode.Measure.PiProducts
-import LeanCode.Scalar.Copies
+module
+
+public import LeanCode.Directional.SupplyContract
+public import LeanCode.Fourier.Coordinates
+public import LeanCode.Measure.PiProducts
+public import LeanCode.Scalar.Copies
+
+@[expose] public section
 
 open Filter Function MeasureTheory Submodule
 open scoped ENNReal BigOperators Topology

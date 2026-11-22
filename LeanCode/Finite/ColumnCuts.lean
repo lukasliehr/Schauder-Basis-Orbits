@@ -1,4 +1,8 @@
-import LeanCode.Finite.ColumnMatrix
+module
+
+public import LeanCode.Finite.ColumnMatrix
+
+@[expose] public section
 
 open Matrix
 open scoped BigOperators InnerProductSpace MatrixOrder ComplexOrder

@@ -1,6 +1,10 @@
-import LeanCode.Construction.ProductAssembly
-import LeanCode.Measure.PiSynthesis
-import LeanCode.Directional.SupplyContract
+module
+
+public import LeanCode.Construction.ProductAssembly
+public import LeanCode.Measure.PiSynthesis
+public import LeanCode.Directional.SupplyContract
+
+@[expose] public section
 
 open MeasureTheory Filter Function
 open scoped BigOperators InnerProductSpace
@@ -91,7 +95,7 @@ theorem measurePreserving_flatToGrouped :
     ((R.weight.nested (groupedWeight P)).measurePreserving_pullFiber ρ
       (fiberEquiv P) (measurePreserving_fiberEquiv P))
 
-private def paddedPolynomial : MixedPoly (AllCoords P) :=
+def paddedPolynomial : MixedPoly (AllCoords P) :=
   padMixedPoly Function.Embedding.inl R.poly *
     ∏ i, padMixedPoly (inclusion P i) (P i).poly
 

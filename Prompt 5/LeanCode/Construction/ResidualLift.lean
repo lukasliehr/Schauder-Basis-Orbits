@@ -1,5 +1,9 @@
-import LeanCode.Construction.ResidualBounds
-import LeanCode.Directional.Seed
+module
+
+public import LeanCode.Construction.ResidualBounds
+public import LeanCode.Directional.Seed
+
+@[expose] public section
 
 open MeasureTheory Filter Submodule Complex Function
 open scoped BigOperators InnerProductSpace

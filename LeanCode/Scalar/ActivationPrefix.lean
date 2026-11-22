@@ -1,5 +1,9 @@
-import LeanCode.Scalar.Induction
-import LeanCode.Finite.ActivatedRowCut
+module
+
+public import LeanCode.Scalar.Induction
+public import LeanCode.Finite.ActivatedRowCut
+
+@[expose] public section
 
 open Matrix MeasureTheory ContinuousLinearMap Submodule
 open scoped ENNReal MatrixOrder ComplexOrder InnerProductSpace InnerProduct

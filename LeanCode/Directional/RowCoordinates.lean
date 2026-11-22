@@ -1,5 +1,9 @@
-import LeanCode.Directional.SeedAction
-import LeanCode.Directional.SeedSpectralWeights
+module
+
+public import LeanCode.Directional.SeedAction
+public import LeanCode.Directional.SeedSpectralWeights
+
+@[expose] public section
 
 open Filter Function MeasureTheory Submodule Matrix
 open scoped ENNReal BigOperators ComplexConjugate InnerProductSpace MatrixOrder ComplexOrder

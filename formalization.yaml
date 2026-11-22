@@ -42,20 +42,6 @@ sources:
       derived from it. The Lean statement MainResult corresponds to Theorem
       thm:main.
     license: "Apache-2.0"
-  - title: "Structured coordinate systems in L^p(R)"
-    authors:
-      - "D. Freeman"
-      - "L. Liehr"
-      - "M. A. Taylor"
-    id: "arXiv:2610.18709v2"
-    type: "paper"
-    location: "https://arxiv.org/abs/2610.18709v2"
-    relationship: "background"
-    note: >-
-      The only reference of the manuscript. According to Prompt 1/RESULT.md the
-      finite scalar and directional constructions develop the method of this
-      paper, and none of its propositions is used as an unproved input.
-    license: "unknown"
   - title: "A Beginner's Guide on How to Autoformalize Mathematics in Lean"
     authors:
       - "Lukas Liehr"
